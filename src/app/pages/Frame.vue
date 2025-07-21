@@ -273,7 +273,6 @@ const addBankAccount = () => {
     }
   }
 }
-}
 
 @include globals.onMobileDevices {
   .frame {
