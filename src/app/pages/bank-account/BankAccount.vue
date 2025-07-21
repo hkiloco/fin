@@ -401,7 +401,7 @@ const getAccountTypeLabel = (type?: string) => {
 };
 
 const getAmountClass = (amount: number) => {
-  return amount >= 0 ? $style.incomeAmount : $style.expenseAmount;
+  return amount >= 0 ? 'incomeAmount' : 'expenseAmount';
 };
 
 const formatDate = (dateString: string) => {
