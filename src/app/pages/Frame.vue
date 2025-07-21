@@ -200,14 +200,30 @@ const closeAddBankAccountDialog = () => {
 };
 
 const addBankAccount = () => {
+  console.log('Add bank account called', bankAccountForm);
+
   if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
+    console.log('Adding bank account:', {
+      name: bankAccountForm.name.trim(),
+      bankName: bankAccountForm.bankName.trim(),
+      accountType: bankAccountForm.accountType,
+      balance: bankAccountForm.balance
+    });
+
     bankAccountStore.addBankAccount({
       name: bankAccountForm.name.trim(),
       bankName: bankAccountForm.bankName.trim(),
       accountType: bankAccountForm.accountType,
       balance: bankAccountForm.balance
     });
+
+    console.log('Bank accounts after adding:', bankAccountStore.accounts.value);
     closeAddBankAccountDialog();
+  } else {
+    console.log('Form validation failed:', {
+      name: bankAccountForm.name,
+      bankName: bankAccountForm.bankName
+    });
   }
 };
 </script>
