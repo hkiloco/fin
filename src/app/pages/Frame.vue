@@ -46,8 +46,8 @@
         @click="openAddBankAccountDialog"
       />
 
-      <!-- Debug indicator -->
-      <div v-if="showAddBankAccount" style="position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 5px; z-index: 9999;">
+      <!-- Debug indicator - Always visible -->
+      <div style="position: fixed; top: 10px; right: 10px; background: blue; color: white; padding: 5px; z-index: 9999; font-size: 12px;">
         Dialog State: {{ showAddBankAccount }}
       </div>
 
