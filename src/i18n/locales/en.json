@@ -124,6 +124,17 @@
     "confirmDeleteAccount": "Are you sure you want to delete the account '{name}'? This action cannot be undone.",
     "expenseTrackingDetails": "Expense Tracking Details"
   },
+  "bankAccounts": {
+    "addBankAccount": "Add Bank Account",
+    "accountName": "Account Name",
+    "bankName": "Bank Name",
+    "accountType": "Account Type",
+    "initialBalance": "Initial Balance",
+    "checking": "Checking",
+    "savings": "Savings",
+    "credit": "Credit Card",
+    "investment": "Investment"
+  },
   "expenseDetails": {
     "totalExpenses": "Total Expenses",
     "activeAccounts": "Active Accounts",
