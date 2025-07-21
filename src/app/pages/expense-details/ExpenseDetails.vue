@@ -247,6 +247,8 @@ const { state } = useDataStore();
 const { state: settings } = useSettingsStore();
 const { t } = useI18n();
 const months = useMonthNames('long', () => settings.general.monthOffset);
+const route = useRoute();
+const selectedBankAccountId = computed(() => route.query.accountId as string || '');
 
 // Transaction storage (in real app, this would be in a store)
 const transactions = ref<Transaction[]>([]);
