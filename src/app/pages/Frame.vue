@@ -18,6 +18,34 @@
         :name="button.name"
       />
 
+      <!-- Bank Accounts Section -->
+      <div v-if="media !== 'mobile'" :class="$style.divider" />
+
+      <!-- Add Bank Account Button -->
+      <Button
+        :icon="RiAddLine"
+        :tooltip="t('bankAccounts.addBankAccount')"
+        tooltipPosition="right"
+        :class="$style.btn"
+        color="success"
+        textual
+        @click="showAddBankAccount = true"
+      />
+
+      <!-- Bank Account List -->
+      <Link
+        v-for="account in bankAccountStore.accounts.value"
+        :key="account.id"
+        :tooltip="account.name"
+        tooltipPosition="right"
+        testId="bank-account"
+        :class="[$style.btn, $style.bankAccountBtn]"
+        :color="(currentRoute) => (currentRoute && $route.query.accountId === account.id ? 'primary' : 'dimmed')"
+        :icon="RiBankLine"
+        name="expense-details"
+        :query="{ accountId: account.id }"
+      />
+
       <div v-if="media !== 'mobile'" style="flex-grow: 1" />
 
       <ToolsButton :class="$style.btn" />
