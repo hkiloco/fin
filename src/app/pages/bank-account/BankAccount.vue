@@ -143,9 +143,12 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 const { state } = useDataStore();
+const { state: settings } = useSettingsStore();
 const { t } = useI18n();
 const route = useRoute();
 const bankAccountStore = useBankAccountStore();
+const months = useMonthNames('long', () => settings.general.monthOffset);
+const { isCurrentMonth } = useStateUtils();
 
 // Get selected bank account
 const selectedBankAccountId = computed(() => route.query.accountId as string || '');
@@ -154,19 +157,21 @@ const selectedBankAccount = computed(() => {
   return bankAccountStore.getBankAccount(selectedBankAccountId.value);
 });
 
-// Transaction storage (in real app, this would be in a store)
-const transactions = ref<Transaction[]>([]);
+const pageTitle = computed(() => {
+  return selectedBankAccount.value ? `${selectedBankAccount.value.name} - ${selectedBankAccount.value.bankName}` : 'Bank Account';
+});
+
+// Transaction categories storage (similar to budget groups but for bank transactions)
+const transactionCategories = ref([
+  { id: uuid(), name: 'Groceries', values: new Array(12).fill(0) },
+  { id: uuid(), name: 'Gas & Transportation', values: new Array(12).fill(0) },
+  { id: uuid(), name: 'Restaurants', values: new Array(12).fill(0) },
+  { id: uuid(), name: 'Shopping', values: new Array(12).fill(0) },
+  { id: uuid(), name: 'Bills & Utilities', values: new Array(12).fill(0) }
+]);
 
 // UI state
-const showAddTransaction = ref(false);
-const showFilters = ref(false);
-const editingTransaction = ref<Transaction | null>(null);
-const currentPage = ref(1);
-const itemsPerPage = 20;
-
-// Filter state
-const selectedCategory = ref('');
-const searchQuery = ref('');
+const allowDelete = ref(false);
 
 // Form state
 const transactionForm = reactive({
