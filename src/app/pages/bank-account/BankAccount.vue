@@ -1,245 +1,118 @@
 <template>
-  <div :class="$style.bankAccount">
-    <!-- Header with account summary -->
-    <div :class="$style.header">
-      <div :class="$style.accountHeader">
-        <div :class="$style.accountInfo">
-          <h1 :class="$style.accountTitle">
-            {{ selectedBankAccount?.name || t('bankAccount.bankAccount') }}
-          </h1>
-          <div :class="$style.accountMeta">
-            <span :class="$style.bankName">{{ selectedBankAccount?.bankName }}</span>
-            <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
-            <span :class="$style.balance">
-              {{ t('bankAccount.balance') }}: 
-              <Currency :value="currentBalance" />
-            </span>
-            <span :class="$style.uncleared">
-              {{ t('bankAccount.thisMonth') }}: 
-              <Currency :value="currentMonthTransactions" />
-            </span>
-          </div>
-        </div>
-        <div :class="$style.yearToggle">
-          <YearToggle keyPath="bankAccount.transactionsFor" />
-        </div>
+  <Pane :amount="totalBalance" :title="pageTitle">
+    <template #title>
+      <div :class="$style.titleSection">
+        <span>{{ selectedBankAccount?.name || t('bankAccount.bankAccount') }}</span>
+        <span :class="$style.bankMeta">{{ selectedBankAccount?.bankName }}</span>
       </div>
-    </div>
+    </template>
+    <template #header>
+      <YearToggle keyPath="bankAccount.transactionsFor" />
+    </template>
 
-    <!-- Action buttons -->
-    <div :class="$style.actionBar">
-      <Button
-        :icon="RiAddLine"
-        :text="t('bankAccount.addTransaction')"
-        color="primary"
-        size="s"
-        @click="showAddTransaction = true"
-      />
-      <Button
-        :icon="RiFilterLine"
-        :text="t('bankAccount.filter')"
-        color="secondary"
-        size="s"
-        @click="showFilters = !showFilters"
-      />
-      <Button
-        :icon="RiDownloadLine"
-        :text="t('bankAccount.export')"
-        color="secondary"
-        size="s"
-        @click="exportTransactions"
-      />
-    </div>
+    <div :class="$style.transactionGrid">
+      <!-- Header -->
+      <span />
+      <span />
+      <span />
 
-    <!-- Filters -->
-    <div v-if="showFilters" :class="$style.filtersSection">
-      <div :class="$style.filters">
-        <Select
-          :value="selectedCategory"
-          :options="categoryOptions"
-          :placeholder="t('bankAccount.allCategories')"
-          @update:value="selectedCategory = $event"
-        />
-        <TextField
-          :value="searchQuery"
-          :placeholder="t('bankAccount.searchTransactions')"
-          @update:value="searchQuery = $event"
-        />
-      </div>
-    </div>
-
-    <!-- Transaction table -->
-    <div :class="$style.transactionTable">
-      <div :class="$style.tableHeader">
-        <span :class="$style.colDate">{{ t('bankAccount.date') }}</span>
-        <span :class="$style.colPayee">{{ t('bankAccount.payee') }}</span>
-        <span :class="$style.colCategory">{{ t('bankAccount.category') }}</span>
-        <span :class="$style.colNotes">{{ t('bankAccount.notes') }}</span>
-        <span :class="$style.colAmount">{{ t('bankAccount.amount') }}</span>
-        <span :class="$style.colActions"></span>
-      </div>
-
-      <div v-if="filteredTransactions.length === 0" :class="$style.emptyState">
-        <RiInformationLine :class="$style.emptyIcon" />
-        <p>{{ t('bankAccount.noTransactions') }}</p>
-        <Button
-          :icon="RiAddLine"
-          :text="t('bankAccount.addFirstTransaction')"
-          color="primary"
-          @click="showAddTransaction = true"
-        />
-      </div>
-
-      <div
-        v-for="transaction in paginatedTransactions"
-        :key="transaction.id"
-        :class="$style.tableRow"
+      <!-- Months -->
+      <span
+        v-for="(month, index) of months"
+        :key="month"
+        :class="[
+          $style.month,
+          {
+            [$style.current]: isCurrentMonth(index),
+            [$style.start]: index === 0,
+            [$style.end]: index === 11
+          }
+        ]"
       >
-        <span :class="$style.colDate">{{ formatDate(transaction.date) }}</span>
-        <span :class="$style.colPayee">{{ transaction.payee }}</span>
-        <span :class="$style.colCategory">
-          <span :class="$style.categoryBadge">{{ transaction.category }}</span>
-        </span>
-        <span :class="$style.colNotes">{{ transaction.notes || '—' }}</span>
-        <span :class="$style.colAmount">
-          <Currency
-            :value="transaction.type === 'income' ? transaction.amount : -transaction.amount"
-            :class="transaction.type === 'income' ? $style.incomeAmount : $style.expenseAmount"
-          />
-        </span>
-        <span :class="$style.colActions">
-          <Button
-            :icon="RiEditLine"
-            color="secondary"
-            size="s"
-            textual
-            @click="editTransaction(transaction)"
-          />
-          <Button
-            :icon="RiDeleteBinLine"
-            color="danger"
-            size="s"
-            textual
-            @click="deleteTransaction(transaction.id)"
-          />
-        </span>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div v-if="totalPages > 1" :class="$style.pagination">
-      <Button
-        :icon="RiArrowLeftSLine"
-        :disabled="currentPage === 1"
-        textual
-        @click="currentPage--"
-      />
-      <span :class="$style.pageInfo">
-        {{ t('bankAccount.pageOf', { current: currentPage, total: totalPages }) }}
+        <span>{{ month }}</span>
       </span>
+      <span />
+      <span />
+
+      <!-- Totals Row -->
+      <span />
       <Button
-        :icon="RiArrowRightSLine"
-        :disabled="currentPage === totalPages"
+        :color="allowDelete ? 'danger' : 'success'"
+        :icon="allowDelete ? RiLockUnlockLine : RiLockLine"
         textual
-        @click="currentPage++"
+        @click="allowDelete = !allowDelete"
       />
-    </div>
+      <span :class="[$style.sum, $style.totals]">{{ t('shared.totals') }}</span>
+      <Currency
+        v-for="(total, index) of monthlyTotals"
+        :key="index"
+        :value="total"
+        :class="$style.sum"
+      />
+      <span />
+      <span />
 
-    <!-- Add/Edit Transaction Modal -->
-    <div v-if="showAddTransaction" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-      <div style="background: white; padding: 30px; border-radius: 8px; min-width: 500px; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;">
-        <h2 style="margin: 0 0 20px 0; color: #333; font-size: 24px;">
-          {{ editingTransaction ? 'Edit Transaction' : 'Add Transaction' }}
-        </h2>
+      <!-- Transaction Categories -->
+      <template v-for="(category, categoryIndex) of transactionCategories" :key="category.id">
+        <Draggable
+          :id="category.id"
+          name="transaction-categories"
+        />
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Date *</label>
-            <input
-              v-model="transactionForm.date"
-              type="date"
-              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-              required
-            />
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Payee/Description *</label>
-            <input
-              v-model="transactionForm.payee"
-              type="text"
-              placeholder="e.g., Grocery Store, Gas Station"
-              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-              required
-            />
-          </div>
-        </div>
+        <Button
+          color="dimmed"
+          :disabled="!allowDelete"
+          :icon="RiCloseCircleLine"
+          textual
+          @click="removeCategory(category.id)"
+        />
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Category *</label>
-            <select
-              v-model="transactionForm.category"
-              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-              required
-            >
-              <option value="">Select Category</option>
-              <option v-for="option in categorySelectOptions" :key="option.value" :value="option.value">
-                {{ option.label }}
-              </option>
-            </select>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Transaction Type *</label>
-            <select
-              v-model="transactionForm.type"
-              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-              required
-            >
-              <option value="expense">Expense (Money Out)</option>
-              <option value="income">Income (Money In)</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Amount *</label>
-          <input
-            v-model="transactionForm.amount"
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0.00"
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-            required
+        <span :class="$style.categoryHeader">
+          <TextCell
+            :modelValue="category.name"
+            @update:model-value="updateCategoryName(category.id, $event)"
           />
-        </div>
+        </span>
 
-        <div style="margin-bottom: 20px;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Notes (Optional)</label>
-          <textarea
-            v-model="transactionForm.notes"
-            placeholder="Additional details about this transaction..."
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; resize: vertical; min-height: 80px;"
-          ></textarea>
-        </div>
+        <span
+          v-for="(_, monthIndex) of category.values"
+          :key="category.id + monthIndex"
+          :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: categoryIndex % 2,
+              [$style.firstRow]: categoryIndex === 0,
+              [$style.firstColumn]: monthIndex === 0,
+              [$style.currentMonth]: isCurrentMonth(monthIndex),
+            }
+          ]"
+        >
+          <CellMenu
+            :actions="[
+              { id: 'fill', label: t('shared.fillRow') },
+              { id: 'fill-to-right', label: t('shared.fillRowToRight') }
+            ]"
+            @action="performAction($event, category.id, monthIndex, category.values[monthIndex])"
+          >
+            <CurrencyCell
+              :modelValue="category.values[monthIndex]"
+              @update:model-value="updateCategoryValue(category.id, monthIndex, $event)"
+            />
+          </CellMenu>
+        </span>
 
-        <div style="text-align: right; display: flex; gap: 12px; justify-content: flex-end;">
-          <button
-            @click="closeTransactionDialog"
-            style="padding: 12px 24px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; color: #555;"
-          >
-            Cancel
-          </button>
-          <button
-            @click="saveTransaction"
-            style="padding: 12px 24px; background: #28a745; color: white; border: 2px solid #28a745; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;"
-          >
-            {{ editingTransaction ? 'Update Transaction' : 'Add Transaction' }}
-          </button>
-        </div>
-      </div>
+        <Currency :class="$style.meta" :value="sum(category.values)" />
+        <Currency :class="$style.meta" :value="average(category.values)" />
+      </template>
+
+      <!-- Add Category Row -->
+      <span />
+      <Button :icon="RiAddCircleLine" textual @click="addCategory" />
+      <span style="grid-column: 3 / 16" />
+      <Currency :class="[$style.meta, $style.bold]" :value="totalBalance" />
+      <Currency :class="[$style.meta, $style.bold]" :value="averageBalance" />
     </div>
-  </div>
+  </Pane>
 </template>
 
 <script lang="ts" setup>
