@@ -112,6 +112,18 @@
     "totals": "Totals",
     "placeholder": "Start by filling out the income / expenses tabs! :)"
   },
+  "expenses": {
+    "addAccount": "Add Account",
+    "manageAccounts": "Manage Accounts",
+    "accountManager": "Account Manager",
+    "accounts": "accounts",
+    "noAccounts": "No accounts found. Create your first account to start tracking expenses.",
+    "createFirstAccount": "Create First Account",
+    "categories": "categories",
+    "enterAccountName": "Enter account name:",
+    "confirmDeleteAccount": "Are you sure you want to delete the account '{name}'? This action cannot be undone.",
+    "expenseTrackingDetails": "Expense Tracking Details"
+  },
   "page": {
     "income": {
       "title": "Income",
