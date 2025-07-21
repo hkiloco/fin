@@ -219,24 +219,29 @@
 import YearToggle from '@components/feature/YearToggle.vue';
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
-import EChart from '@components/charts/echart/EChart.vue';
+import Dialog from '@components/base/dialog/Dialog.vue';
+import Form from '@components/base/form/Form.vue';
+import TextField from '@components/base/text-field/TextField.vue';
+import Select from '@components/base/select/Select.vue';
 import {
-  RiBarChartBoxLine,
-  RiAccountBoxLine,
+  RiAddLine,
+  RiFilterLine,
+  RiDownloadLine,
   RiInformationLine,
-  RiArrowLeftLine,
-  RiArrowUpDoubleLine,
-  RiArrowDownDoubleLine,
-  RiPieChartLine
+  RiEditLine,
+  RiDeleteBinLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine
 } from '@remixicon/vue';
 import { useDataStore } from '@store/state';
-import { BudgetGroup, Budget } from '@store/state/types';
+import { BudgetGroup } from '@store/state/types';
+import { Transaction } from '@store/state/transaction-types';
 import { useMonthNames } from '@composables/useMonthNames.ts';
 import { useSettingsStore } from '@store/settings';
 import { sum } from '@utils/array/array.ts';
-import { computed } from 'vue';
+import { uuid } from '@utils/uuid.ts';
+import { computed, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 
 const { state } = useDataStore();
 const { state: settings } = useSettingsStore();
