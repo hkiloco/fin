@@ -46,10 +46,7 @@
         @click="openAddBankAccountDialog"
       />
 
-      <!-- Debug indicator - Always visible -->
-      <div style="position: fixed; top: 10px; right: 10px; background: blue; color: white; padding: 5px; z-index: 9999; font-size: 12px;">
-        Dialog State: {{ showAddBankAccount }}
-      </div>
+
 
       <div v-if="media !== 'mobile'" style="flex-grow: 1" />
 
