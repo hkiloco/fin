@@ -195,110 +195,48 @@ const averageBalance = computed(() => {
   return total / 12;
 });
 
-// Methods
-const getAccountTypeLabel = (type?: string) => {
-  if (!type) return '';
-  return t(`bankAccounts.${type}`);
+// Methods for grid management
+const addCategory = () => {
+  transactionCategories.value.push({
+    id: uuid(),
+    name: 'New Category',
+    values: new Array(12).fill(0)
+  });
 };
 
-const getAmountClass = (amount: number) => {
-  return amount >= 0 ? 'incomeAmount' : 'expenseAmount';
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString();
-};
-
-const resetForm = () => {
-  transactionForm.date = new Date().toISOString().split('T')[0];
-  transactionForm.payee = '';
-  transactionForm.category = '';
-  transactionForm.type = 'expense';
-  transactionForm.amount = 0;
-  transactionForm.notes = '';
-};
-
-const closeTransactionDialog = () => {
-  showAddTransaction.value = false;
-  editingTransaction.value = null;
-  resetForm();
-};
-
-const saveTransaction = () => {
-  if (!selectedBankAccountId.value) {
-    alert('No bank account selected!');
-    return;
-  }
-
-  // Validate required fields
-  if (!transactionForm.date || !transactionForm.payee || !transactionForm.category || !transactionForm.amount) {
-    alert('Please fill in all required fields (Date, Payee, Category, Amount)');
-    return;
-  }
-
-  if (transactionForm.amount <= 0) {
-    alert('Amount must be greater than 0');
-    return;
-  }
-
-  if (editingTransaction.value) {
-    // Edit existing transaction
-    const index = transactions.value.findIndex(t => t.id === editingTransaction.value!.id);
-    if (index !== -1) {
-      transactions.value[index] = {
-        ...editingTransaction.value,
-        date: transactionForm.date,
-        payee: transactionForm.payee,
-        category: transactionForm.category,
-        type: transactionForm.type,
-        amount: Number(transactionForm.amount),
-        notes: transactionForm.notes,
-        accountId: selectedBankAccountId.value
-      };
-    }
-  } else {
-    // Add new transaction
-    const newTransaction: Transaction = {
-      id: uuid(),
-      date: transactionForm.date,
-      payee: transactionForm.payee,
-      category: transactionForm.category,
-      type: transactionForm.type,
-      amount: Number(transactionForm.amount),
-      notes: transactionForm.notes,
-      accountId: selectedBankAccountId.value
-    };
-    transactions.value.push(newTransaction);
-  }
-
-  closeTransactionDialog();
-};
-
-const editTransaction = (transaction: Transaction) => {
-  editingTransaction.value = transaction;
-  Object.assign(transactionForm, transaction);
-  showAddTransaction.value = true;
-};
-
-const deleteTransaction = (id: string) => {
-  if (confirm(t('bankAccount.confirmDeleteTransaction'))) {
-    const index = transactions.value.findIndex(t => t.id === id);
-    if (index !== -1) {
-      transactions.value.splice(index, 1);
-    }
+const removeCategory = (id: string) => {
+  const index = transactionCategories.value.findIndex(cat => cat.id === id);
+  if (index !== -1) {
+    transactionCategories.value.splice(index, 1);
   }
 };
 
-const exportTransactions = () => {
-  const accountTransactions = transactions.value.filter(t => t.accountId === selectedBankAccountId.value);
-  const data = JSON.stringify(accountTransactions, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${selectedBankAccount.value?.name || 'bank-account'}-transactions-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+const updateCategoryName = (id: string, name: string) => {
+  const category = transactionCategories.value.find(cat => cat.id === id);
+  if (category) {
+    category.name = name;
+  }
+};
+
+const updateCategoryValue = (id: string, monthIndex: number, amount: number) => {
+  const category = transactionCategories.value.find(cat => cat.id === id);
+  if (category) {
+    category.values[monthIndex] = amount;
+  }
+};
+
+const performAction = (action: CellMenuActionId, categoryId: string, monthIndex: number, value: number) => {
+  const category = transactionCategories.value.find(cat => cat.id === categoryId);
+  if (!category) return;
+
+  switch (action) {
+    case 'fill':
+      category.values.fill(value);
+      break;
+    case 'fill-to-right':
+      category.values.fill(value, monthIndex);
+      break;
+  }
 };
 </script>
 
