@@ -105,14 +105,14 @@
           <h3>{{ t('expenseDetails.insights') }}</h3>
           <div :class="$style.insightsList">
             <div :class="$style.insightItem">
-              <RiTrendingUpLine :class="$style.insightIcon" />
+              <RiArrowUpDoubleLine :class="$style.insightIcon" />
               <div>
                 <strong>{{ t('expenseDetails.highestMonth') }}</strong>
                 <p>{{ getHighestExpenseMonth() }}</p>
               </div>
             </div>
             <div :class="$style.insightItem">
-              <RiTrendingDownLine :class="$style.insightIcon" />
+              <RiArrowDownDoubleLine :class="$style.insightIcon" />
               <div>
                 <strong>{{ t('expenseDetails.lowestMonth') }}</strong>
                 <p>{{ getLowestExpenseMonth() }}</p>
