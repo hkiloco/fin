@@ -189,12 +189,10 @@ const resetBankAccountForm = () => {
 };
 
 const openAddBankAccountDialog = () => {
-  console.log('Opening add bank account dialog');
   showAddBankAccount.value = true;
 };
 
 const closeAddBankAccountDialog = () => {
-  console.log('Closing add bank account dialog');
   showAddBankAccount.value = false;
   resetBankAccountForm();
 };
