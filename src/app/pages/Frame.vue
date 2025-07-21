@@ -133,7 +133,6 @@ import UpdateAppButton from '@app/pages/navigation/update/UpdateAppButton.vue';
 import Link from '@components/base/link/Link.vue';
 import Button from '@components/base/button/Button.vue';
 import Dialog from '@components/base/dialog/Dialog.vue';
-import Form from '@components/base/form/Form.vue';
 import TextField from '@components/base/text-field/TextField.vue';
 import Select from '@components/base/select/Select.vue';
 import ComponentTransition from '@components/misc/component-transition/ComponentTransition.vue';
