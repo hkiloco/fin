@@ -194,7 +194,9 @@ const closeAddBankAccountDialog = () => {
   resetBankAccountForm();
 };
 
-const addBankAccount = () => {
+const addBankAccount = (event?: Event) => {
+  event?.preventDefault?.();
+
   if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
     bankAccountStore.addBankAccount({
       name: bankAccountForm.name.trim(),
