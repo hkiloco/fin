@@ -78,7 +78,8 @@ interface FrameButton {
 const buttons = computed((): FrameButton[] => [
   { icon: RiDonutChartLine, name: 'dashboard', tooltip: t('page.dashboard.title') },
   { icon: RiHandCoinLine, name: 'income', tooltip: t('page.income.title') },
-  { icon: RiShoppingBagLine, name: 'expenses', tooltip: t('page.expenses.title') }
+  { icon: RiShoppingBagLine, name: 'expenses', tooltip: t('page.expenses.title') },
+  { icon: RiBarChartBoxLine, name: 'expense-details', tooltip: t('expenses.expenseTrackingDetails') }
 ]);
 </script>
 
