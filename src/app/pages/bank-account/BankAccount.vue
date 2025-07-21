@@ -116,26 +116,29 @@
 </template>
 
 <script lang="ts" setup>
+import Pane from '@components/feature/Pane.vue';
 import YearToggle from '@components/feature/YearToggle.vue';
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
-import TextField from '@components/base/text-field/TextField.vue';
-import Select from '@components/base/select/Select.vue';
+import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
+import TextCell from '@components/base/text-cell/TextCell.vue';
+import Draggable from '@components/base/draggable/Draggable.vue';
+import CellMenu from '@components/base/cell-menu/CellMenu.vue';
+import { CellMenuActionId } from '@components/base/cell-menu/CellMenu.types';
 import {
-  RiAddLine,
-  RiFilterLine,
-  RiDownloadLine,
-  RiInformationLine,
-  RiEditLine,
-  RiDeleteBinLine,
-  RiArrowLeftSLine,
-  RiArrowRightSLine
+  RiAddCircleLine,
+  RiCloseCircleLine,
+  RiLockLine,
+  RiLockUnlockLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
-import { Transaction } from '@store/state/transaction-types';
 import { useDataStore } from '@store/state';
+import { useMonthNames } from '@composables/useMonthNames.ts';
+import { useSettingsStore } from '@store/settings';
+import { useStateUtils } from '@composables/useStateUtils.ts';
 import { uuid } from '@utils/uuid.ts';
-import { computed, ref, reactive } from 'vue';
+import { sum, average } from '@utils/array/array.ts';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
