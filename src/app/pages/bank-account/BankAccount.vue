@@ -1,118 +1,100 @@
 <template>
-  <Pane :amount="totalBalance" :title="pageTitle">
-    <template #title>
-      <div :class="$style.titleSection">
-        <span>{{ selectedBankAccount?.name || t('bankAccount.bankAccount') }}</span>
-        <span :class="$style.bankMeta">{{ selectedBankAccount?.bankName }}</span>
+  <div :class="$style.bankAccount">
+    <!-- Header -->
+    <div :class="$style.header">
+      <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
+      <div :class="$style.accountInfo">
+        <span :class="$style.accountName">{{ selectedBankAccount?.name }}</span>
+        <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
+        <span :class="$style.balance">
+          {{ t('bankAccount.balance') }}: <Currency :value="accountBalance" />
+        </span>
       </div>
-    </template>
-    <template #header>
-      <YearToggle keyPath="bankAccount.transactionsFor" />
-    </template>
-
-    <div :class="$style.transactionGrid">
-      <!-- Header -->
-      <span />
-      <span />
-      <span />
-
-      <!-- Months -->
-      <span
-        v-for="(month, index) of months"
-        :key="month"
-        :class="[
-          $style.month,
-          {
-            [$style.current]: isCurrentMonth(index),
-            [$style.start]: index === 0,
-            [$style.end]: index === 11
-          }
-        ]"
-      >
-        <span>{{ month }}</span>
-      </span>
-      <span />
-      <span />
-
-      <!-- Totals Row -->
-      <span />
-      <Button
-        :color="allowDelete ? 'danger' : 'success'"
-        :icon="allowDelete ? RiLockUnlockLine : RiLockLine"
-        textual
-        @click="allowDelete = !allowDelete"
-      />
-      <span :class="[$style.sum, $style.totals]">{{ t('shared.totals') }}</span>
-      <Currency
-        v-for="(total, index) of monthlyTotals"
-        :key="index"
-        :value="total"
-        :class="$style.sum"
-      />
-      <span />
-      <span />
-
-      <!-- Transaction Categories -->
-      <template v-for="(category, categoryIndex) of transactionCategories" :key="category.id">
-        <Draggable
-          :id="category.id"
-          name="transaction-categories"
-        />
-
-        <Button
-          color="dimmed"
-          :disabled="!allowDelete"
-          :icon="RiCloseCircleLine"
-          textual
-          @click="removeCategory(category.id)"
-        />
-
-        <span :class="$style.categoryHeader">
-          <TextCell
-            :modelValue="category.name"
-            @update:model-value="updateCategoryName(category.id, $event)"
-          />
-        </span>
-
-        <span
-          v-for="(_, monthIndex) of category.values"
-          :key="category.id + monthIndex"
-          :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: categoryIndex % 2,
-              [$style.firstRow]: categoryIndex === 0,
-              [$style.firstColumn]: monthIndex === 0,
-              [$style.currentMonth]: isCurrentMonth(monthIndex),
-            }
-          ]"
-        >
-          <CellMenu
-            :actions="[
-              { id: 'fill', label: t('shared.fillRow') },
-              { id: 'fill-to-right', label: t('shared.fillRowToRight') }
-            ]"
-            @action="performAction($event, category.id, monthIndex, category.values[monthIndex])"
-          >
-            <CurrencyCell
-              :modelValue="category.values[monthIndex]"
-              @update:model-value="updateCategoryValue(category.id, monthIndex, $event)"
-            />
-          </CellMenu>
-        </span>
-
-        <Currency :class="$style.meta" :value="sum(category.values)" />
-        <Currency :class="$style.meta" :value="average(category.values)" />
-      </template>
-
-      <!-- Add Category Row -->
-      <span />
-      <Button :icon="RiAddCircleLine" textual @click="addCategory" />
-      <span style="grid-column: 3 / 16" />
-      <Currency :class="[$style.meta, $style.bold]" :value="totalBalance" />
-      <Currency :class="[$style.meta, $style.bold]" :value="averageBalance" />
     </div>
-  </Pane>
+
+    <!-- Transaction Table -->
+    <div :class="$style.transactionContainer">
+      <div :class="$style.tableActions">
+        <Button
+          :icon="RiAddLine"
+          :text="t('bankAccount.addTransaction')"
+          color="primary"
+          size="s"
+          @click="addNewTransaction"
+        />
+      </div>
+
+      <div :class="$style.transactionTable">
+        <!-- Table Header -->
+        <div :class="$style.tableHeader">
+          <span :class="$style.colDate">{{ t('bankAccount.date') }}</span>
+          <span :class="$style.colPayee">{{ t('bankAccount.payee') }}</span>
+          <span :class="$style.colCategory">{{ t('bankAccount.category') }}</span>
+          <span :class="$style.colNotes">{{ t('bankAccount.notes') }}</span>
+          <span :class="$style.colAmount">{{ t('bankAccount.amount') }}</span>
+          <span :class="$style.colActions"></span>
+        </div>
+
+        <!-- Transaction Rows -->
+        <div
+          v-for="(transaction, index) in transactions"
+          :key="transaction.id"
+          :class="[$style.tableRow, { [$style.even]: index % 2 === 1 }]"
+        >
+          <span :class="$style.colDate">
+            <TextCell
+              :modelValue="transaction.date"
+              @update:model-value="updateTransaction(transaction.id, 'date', $event)"
+            />
+          </span>
+          <span :class="$style.colPayee">
+            <TextCell
+              :modelValue="transaction.payee"
+              @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
+            />
+          </span>
+          <span :class="$style.colCategory">
+            <TextCell
+              :modelValue="transaction.category"
+              @update:model-value="updateTransaction(transaction.id, 'category', $event)"
+            />
+          </span>
+          <span :class="$style.colNotes">
+            <TextCell
+              :modelValue="transaction.notes || ''"
+              @update:model-value="updateTransaction(transaction.id, 'notes', $event)"
+            />
+          </span>
+          <span :class="$style.colAmount">
+            <CurrencyCell
+              :modelValue="transaction.amount"
+              @update:model-value="updateTransaction(transaction.id, 'amount', $event)"
+            />
+          </span>
+          <span :class="$style.colActions">
+            <Button
+              :icon="RiDeleteBinLine"
+              color="danger"
+              size="s"
+              textual
+              @click="deleteTransaction(transaction.id)"
+            />
+          </span>
+        </div>
+
+        <!-- Empty state -->
+        <div v-if="transactions.length === 0" :class="$style.emptyState">
+          <p>{{ t('bankAccount.noTransactions') }}</p>
+          <Button
+            :icon="RiAddLine"
+            :text="t('bankAccount.addFirstTransaction')"
+            color="primary"
+            @click="addNewTransaction"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
