@@ -58,7 +58,7 @@ import UpdateAppButton from '@app/pages/navigation/update/UpdateAppButton.vue';
 import Link from '@components/base/link/Link.vue';
 import ComponentTransition from '@components/misc/component-transition/ComponentTransition.vue';
 import { useMediaQuery } from '@composables/useMediaQuery.ts';
-import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine } from '@remixicon/vue';
+import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine } from '@remixicon/vue';
 import { useStorage } from '@storage/index';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
