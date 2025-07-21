@@ -1,134 +1,217 @@
 <template>
   <div :class="$style.expenseDetails">
+    <!-- Header with account summary -->
     <div :class="$style.header">
-      <div :class="$style.titleSection">
-        <div :class="$style.pageTitle">
-          <RiBarChartBoxLine :class="$style.titleIcon" />
-          <h1>{{ t('expenses.expenseTrackingDetails') }}</h1>
+      <div :class="$style.accountHeader">
+        <div :class="$style.accountInfo">
+          <h1 :class="$style.accountTitle">{{ t('expenseDetails.expenseTracker') }}</h1>
+          <div :class="$style.accountMeta">
+            <span :class="$style.balance">
+              {{ t('expenseDetails.totalExpenses') }}:
+              <Currency :value="totalExpenses" />
+            </span>
+            <span :class="$style.uncleared">
+              {{ t('expenseDetails.thisMonth') }}:
+              <Currency :value="currentMonthExpenses" />
+            </span>
+          </div>
         </div>
-        <YearToggle keyPath="expenses.expenseTrackingDetails" />
-      </div>
-      
-      <div :class="$style.summary">
-        <div :class="$style.summaryCard">
-          <span :class="$style.summaryLabel">{{ t('expenseDetails.totalExpenses') }}</span>
-          <Currency :value="totalExpenses" :class="$style.summaryValue" />
-        </div>
-        <div :class="$style.summaryCard">
-          <span :class="$style.summaryLabel">{{ t('expenseDetails.activeAccounts') }}</span>
-          <span :class="$style.summaryValue">{{ activeAccountsCount }}</span>
-        </div>
-        <div :class="$style.summaryCard">
-          <span :class="$style.summaryLabel">{{ t('expenseDetails.avgMonthlyExpense') }}</span>
-          <Currency :value="averageMonthlyExpense" :class="$style.summaryValue" />
+        <div :class="$style.yearToggle">
+          <YearToggle keyPath="expenses.expenseTrackingDetails" />
         </div>
       </div>
     </div>
 
-    <div :class="$style.content">
-      <div :class="$style.chartsSection">
-        <div :class="$style.chartCard">
-          <h3>{{ t('expenseDetails.monthlyTrend') }}</h3>
-          <EChart :option="monthlyTrendChart" :class="$style.chart" />
-        </div>
-        
-        <div :class="$style.chartCard">
-          <h3>{{ t('expenseDetails.categoryBreakdown') }}</h3>
-          <EChart :option="categoryBreakdownChart" :class="$style.chart" />
-        </div>
+    <!-- Action buttons -->
+    <div :class="$style.actionBar">
+      <Button
+        :icon="RiAddLine"
+        :text="t('expenseDetails.addTransaction')"
+        color="primary"
+        size="s"
+        @click="showAddTransaction = true"
+      />
+      <Button
+        :icon="RiFilterLine"
+        :text="t('expenseDetails.filter')"
+        color="secondary"
+        size="s"
+        @click="showFilters = !showFilters"
+      />
+      <Button
+        :icon="RiDownloadLine"
+        :text="t('expenseDetails.export')"
+        color="secondary"
+        size="s"
+        @click="exportTransactions"
+      />
+    </div>
+
+    <!-- Filters -->
+    <div v-if="showFilters" :class="$style.filtersSection">
+      <div :class="$style.filters">
+        <Select
+          :value="selectedAccount"
+          :options="accountOptions"
+          :placeholder="t('expenseDetails.allAccounts')"
+          @update:value="selectedAccount = $event"
+        />
+        <Select
+          :value="selectedCategory"
+          :options="categoryOptions"
+          :placeholder="t('expenseDetails.allCategories')"
+          @update:value="selectedCategory = $event"
+        />
+        <TextField
+          :value="searchQuery"
+          :placeholder="t('expenseDetails.searchTransactions')"
+          @update:value="searchQuery = $event"
+        />
+      </div>
+    </div>
+
+    <!-- Transaction table -->
+    <div :class="$style.transactionTable">
+      <div :class="$style.tableHeader">
+        <span :class="$style.colDate">{{ t('expenseDetails.date') }}</span>
+        <span :class="$style.colPayee">{{ t('expenseDetails.payee') }}</span>
+        <span :class="$style.colCategory">{{ t('expenseDetails.category') }}</span>
+        <span :class="$style.colNotes">{{ t('expenseDetails.notes') }}</span>
+        <span :class="$style.colAmount">{{ t('expenseDetails.amount') }}</span>
+        <span :class="$style.colActions"></span>
       </div>
 
-      <div :class="$style.detailsSection">
-        <div :class="$style.accountsList">
-          <h3>{{ t('expenseDetails.accountsOverview') }}</h3>
-          
-          <div v-if="state.expenses.length === 0" :class="$style.emptyState">
-            <RiInformationLine :class="$style.emptyIcon" />
-            <p>{{ t('expenseDetails.noExpenseData') }}</p>
-            <Button
-              :icon="RiArrowLeftLine"
-              :text="t('expenseDetails.goToExpenses')"
-              color="primary"
-              @click="goToExpenses"
+      <div v-if="filteredTransactions.length === 0" :class="$style.emptyState">
+        <RiInformationLine :class="$style.emptyIcon" />
+        <p>{{ t('expenseDetails.noTransactions') }}</p>
+        <Button
+          :icon="RiAddLine"
+          :text="t('expenseDetails.addFirstTransaction')"
+          color="primary"
+          @click="showAddTransaction = true"
+        />
+      </div>
+
+      <div
+        v-for="transaction in paginatedTransactions"
+        :key="transaction.id"
+        :class="$style.tableRow"
+      >
+        <span :class="$style.colDate">{{ formatDate(transaction.date) }}</span>
+        <span :class="$style.colPayee">{{ transaction.payee }}</span>
+        <span :class="$style.colCategory">
+          <span :class="$style.categoryBadge">{{ transaction.category }}</span>
+        </span>
+        <span :class="$style.colNotes">{{ transaction.notes || '—' }}</span>
+        <span :class="$style.colAmount">
+          <Currency :value="transaction.amount" :class="$style.expenseAmount" />
+        </span>
+        <span :class="$style.colActions">
+          <Button
+            :icon="RiEditLine"
+            color="secondary"
+            size="s"
+            textual
+            @click="editTransaction(transaction)"
+          />
+          <Button
+            :icon="RiDeleteBinLine"
+            color="danger"
+            size="s"
+            textual
+            @click="deleteTransaction(transaction.id)"
+          />
+        </span>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="totalPages > 1" :class="$style.pagination">
+      <Button
+        :icon="RiArrowLeftSLine"
+        :disabled="currentPage === 1"
+        textual
+        @click="currentPage--"
+      />
+      <span :class="$style.pageInfo">
+        {{ t('expenseDetails.pageOf', { current: currentPage, total: totalPages }) }}
+      </span>
+      <Button
+        :icon="RiArrowRightSLine"
+        :disabled="currentPage === totalPages"
+        textual
+        @click="currentPage++"
+      />
+    </div>
+
+    <!-- Add/Edit Transaction Dialog -->
+    <Dialog v-if="showAddTransaction" @close="closeTransactionDialog">
+      <template #title>
+        {{ editingTransaction ? t('expenseDetails.editTransaction') : t('expenseDetails.addTransaction') }}
+      </template>
+      <template #content>
+        <Form :class="$style.transactionForm" @submit="saveTransaction">
+          <div :class="$style.formRow">
+            <TextField
+              :value="transactionForm.date"
+              :label="t('expenseDetails.date')"
+              type="date"
+              required
+              @update:value="transactionForm.date = $event"
+            />
+            <TextField
+              :value="transactionForm.payee"
+              :label="t('expenseDetails.payee')"
+              required
+              @update:value="transactionForm.payee = $event"
             />
           </div>
-
-          <div v-else :class="$style.accountCards">
-            <div
-              v-for="account in sortedAccounts"
-              :key="account.id"
-              :class="$style.accountCard"
-            >
-              <div :class="$style.accountHeader">
-                <div :class="$style.accountInfo">
-                  <RiAccountBoxLine :class="$style.accountIcon" />
-                  <div>
-                    <h4 :class="$style.accountName">{{ account.name }}</h4>
-                    <span :class="$style.accountMeta">
-                      {{ account.budgets.length }} {{ t('expenseDetails.categories') }}
-                    </span>
-                  </div>
-                </div>
-                <div :class="$style.accountTotal">
-                  <Currency :value="getAccountTotal(account)" />
-                </div>
-              </div>
-
-              <div :class="$style.categoriesList">
-                <div
-                  v-for="category in account.budgets"
-                  :key="category.id"
-                  :class="$style.categoryItem"
-                >
-                  <div :class="$style.categoryInfo">
-                    <span :class="$style.categoryName">{{ category.name }}</span>
-                    <div :class="$style.categoryChart">
-                      <div
-                        v-for="(value, index) in category.values"
-                        :key="index"
-                        :class="$style.monthBar"
-                        :style="{ height: getBarHeight(value, getMaxCategoryValue(category)) }"
-                        :title="`${getMonthName(index)}: ${formatCurrency(value)}`"
-                      />
-                    </div>
-                  </div>
-                  <div :class="$style.categoryTotal">
-                    <Currency :value="sum(category.values)" />
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div :class="$style.formRow">
+            <Select
+              :value="transactionForm.accountId"
+              :options="accountSelectOptions"
+              :label="t('expenseDetails.account')"
+              required
+              @update:value="transactionForm.accountId = $event"
+            />
+            <Select
+              :value="transactionForm.category"
+              :options="categorySelectOptions"
+              :label="t('expenseDetails.category')"
+              required
+              @update:value="transactionForm.category = $event"
+            />
           </div>
-        </div>
-
-        <div :class="$style.insights">
-          <h3>{{ t('expenseDetails.insights') }}</h3>
-          <div :class="$style.insightsList">
-            <div :class="$style.insightItem">
-              <RiArrowUpDoubleLine :class="$style.insightIcon" />
-              <div>
-                <strong>{{ t('expenseDetails.highestMonth') }}</strong>
-                <p>{{ getHighestExpenseMonth() }}</p>
-              </div>
-            </div>
-            <div :class="$style.insightItem">
-              <RiArrowDownDoubleLine :class="$style.insightIcon" />
-              <div>
-                <strong>{{ t('expenseDetails.lowestMonth') }}</strong>
-                <p>{{ getLowestExpenseMonth() }}</p>
-              </div>
-            </div>
-            <div :class="$style.insightItem">
-              <RiPieChartLine :class="$style.insightIcon" />
-              <div>
-                <strong>{{ t('expenseDetails.largestCategory') }}</strong>
-                <p>{{ getLargestCategory() }}</p>
-              </div>
-            </div>
+          <div :class="$style.formRow">
+            <TextField
+              :value="transactionForm.amount"
+              :label="t('expenseDetails.amount')"
+              type="number"
+              step="0.01"
+              required
+              @update:value="transactionForm.amount = parseFloat($event) || 0"
+            />
           </div>
-        </div>
-      </div>
-    </div>
+          <TextField
+            :value="transactionForm.notes"
+            :label="t('expenseDetails.notes')"
+            @update:value="transactionForm.notes = $event"
+          />
+          <div :class="$style.formActions">
+            <Button
+              :text="t('shared.cancel')"
+              color="secondary"
+              @click="closeTransactionDialog"
+            />
+            <Button
+              :text="editingTransaction ? t('shared.update') : t('shared.add')"
+              color="primary"
+              type="submit"
+            />
+          </div>
+        </Form>
+      </template>
+    </Dialog>
   </div>
 </template>
 
