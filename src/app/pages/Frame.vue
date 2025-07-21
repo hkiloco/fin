@@ -256,6 +256,23 @@ const addBankAccount = () => {
     align-items: center;
     justify-content: center;
   }
+
+  .bankAccountBtn {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      width: 8px;
+      height: 8px;
+      background: var(--c-success);
+      border-radius: 50%;
+      border: 2px solid var(--app-background);
+    }
+  }
+}
 }
 
 @include globals.onMobileDevices {
