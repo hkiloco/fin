@@ -208,128 +208,167 @@ const deleteTransaction = (id: string) => {
 </script>
 
 <style lang="scss" module>
-.titleSection {
+.bankAccount {
+  height: 100%;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  background: var(--app-background);
 }
 
-.bankMeta {
+.header {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  color: white;
+  padding: 20px;
+  border-bottom: 2px solid var(--app-border);
+}
+
+.bankName {
+  margin: 0 0 12px 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-l);
+  color: white;
+}
+
+.accountInfo {
+  display: flex;
+  gap: 20px;
+  font-size: var(--font-size-s);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.accountName {
+  font-weight: var(--font-weight-m);
+}
+
+.accountType {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: var(--font-size-xs);
+}
+
+.balance {
+  font-weight: var(--font-weight-m);
+}
+
+.transactionContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tableActions {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-background-secondary);
+}
+
+.transactionTable {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 120px 1fr 150px 200px 120px 60px;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--app-background-secondary);
+  border-bottom: 2px solid var(--app-border);
+  font-weight: var(--font-weight-m);
   font-size: var(--font-size-xs);
   color: var(--c-text-dimmed);
-  font-weight: var(--font-weight-m);
-}
-
-.transactionGrid {
-  display: grid;
-  grid-template: auto / max-content max-content max-content repeat(12, 1fr) max-content max-content;
-  align-items: center;
-  padding-bottom: 20px;
-}
-
-.sum {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-l);
-  padding-right: 10px;
-
-  &.totals {
-    margin-left: 5px;
-  }
-}
-
-.month {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-m);
-  padding-right: 20px;
-  padding-bottom: 5px;
-
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   position: sticky;
-  position: -webkit-sticky;
   top: 0;
-  background: var(--app-background);
-  border: 2px var(--app-background);
-
-  &.current > span {
-    color: var(--c-text-light);
-    display: inline-block;
-    position: relative;
-    z-index: 0;
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: -3px -8px;
-      border-radius: 100px;
-      background: var(--c-primary);
-      z-index: -1;
-    }
-  }
-
-  > span {
-    display: inline-block;
-  }
-
-  &.start {
-    border-bottom-left-radius: var(--border-radius-l);
-    padding-left: 8px;
-  }
-
-  &.end {
-    border-bottom-right-radius: var(--border-radius-l);
-    padding-right: 8px;
-  }
+  z-index: 1;
 }
 
-.categoryHeader {
-  font-style: italic;
-  font-size: var(--input-field-font-size);
-  font-weight: var(--font-weight-m);
-}
-
-.meta {
-  font-size: var(--input-field-font-size);
-  font-weight: var(--font-weight-m);
-  padding: 0 10px;
-
-  &.bold {
-    position: relative;
-    font-weight: var(--font-weight-l);
-    text-decoration: underline;
-  }
-}
-
-.currencyCell {
-  display: flex;
+.tableRow {
+  display: grid;
+  grid-template-columns: 120px 1fr 150px 200px 120px 60px;
+  gap: 12px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--app-border);
+  font-size: var(--font-size-s);
+  transition: background-color 0.2s;
   align-items: center;
-  background: var(--grid-background-odd);
-  height: 100%;
-  border-right: 1px solid var(--grid-border-color);
-  border-bottom: 1px solid var(--grid-border-color);
-  transition: background-color var(--input-field-transition);
-  box-shadow: inset 0 0 0 1px transparent;
 
-  &.firstRow {
-    border-top: 1px solid var(--grid-border-color);
-  }
-
-  &.firstColumn {
-    border-left: 1px solid var(--grid-border-color);
-  }
-
-  &.currentMonth {
-    background: var(--grid-background-odd-active);
-  }
-
-  &:focus-within {
-    box-shadow: 0 0 0 2px var(--c-primary) inset;
-    border-radius: 1px;
+  &:hover {
+    background: var(--app-background-secondary);
   }
 
   &.even {
-    background: var(--grid-background-even);
+    background: rgba(0, 0, 0, 0.02);
 
-    &.currentMonth {
-      background: var(--grid-background-even-active);
+    &:hover {
+      background: var(--app-background-secondary);
+    }
+  }
+}
+
+.colDate {
+  font-size: var(--font-size-xs);
+}
+
+.colPayee {
+  font-weight: var(--font-weight-m);
+}
+
+.colCategory {
+  font-size: var(--font-size-xs);
+}
+
+.colNotes {
+  font-size: var(--font-size-xs);
+  color: var(--c-text-dimmed);
+}
+
+.colAmount {
+  text-align: right;
+}
+
+.colActions {
+  display: flex;
+  justify-content: center;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--c-text-dimmed);
+
+  p {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .tableHeader {
+    display: none;
+  }
+
+  .tableRow {
+    display: block;
+    padding: 16px;
+
+    > span {
+      display: block;
+      margin-bottom: 8px;
+
+      &:before {
+        content: attr(data-label) ': ';
+        font-weight: var(--font-weight-m);
+        color: var(--c-text-dimmed);
+        font-size: var(--font-size-xs);
+      }
     }
   }
 }
