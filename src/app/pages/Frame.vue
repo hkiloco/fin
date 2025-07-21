@@ -78,46 +78,45 @@
 
     <!-- Add Bank Account Dialog -->
     <Dialog v-if="showAddBankAccount" @close="closeAddBankAccountDialog">
-      <template #title>{{ t('bankAccounts.addBankAccount') }}</template>
+      <template #title>Add Bank Account</template>
       <template #content>
-        <div :class="$style.bankAccountForm">
-          <TextField
-            :value="bankAccountForm.name"
-            :label="t('bankAccounts.accountName')"
-            required
-            @update:value="bankAccountForm.name = $event"
-          />
-          <TextField
-            :value="bankAccountForm.bankName"
-            :label="t('bankAccounts.bankName')"
-            required
-            @update:value="bankAccountForm.bankName = $event"
-          />
-          <Select
-            :value="bankAccountForm.accountType"
-            :options="accountTypeOptions"
-            :label="t('bankAccounts.accountType')"
-            required
-            @update:value="bankAccountForm.accountType = $event"
-          />
-          <TextField
-            :value="bankAccountForm.balance"
-            :label="t('bankAccounts.initialBalance')"
-            type="number"
-            step="0.01"
-            @update:value="bankAccountForm.balance = parseFloat($event) || 0"
-          />
-          <div :class="$style.formActions">
-            <Button
-              :text="t('shared.cancel')"
-              color="secondary"
+        <div style="padding: 20px; min-width: 300px;">
+          <h3>Create New Bank Account</h3>
+          <p>Dialog is showing! Debug value: {{ showAddBankAccount }}</p>
+
+          <div style="margin: 10px 0;">
+            <label style="display: block; margin-bottom: 5px;">Account Name:</label>
+            <input
+              v-model="bankAccountForm.name"
+              type="text"
+              placeholder="e.g., Personal Checking"
+              style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+            />
+          </div>
+
+          <div style="margin: 10px 0;">
+            <label style="display: block; margin-bottom: 5px;">Bank Name:</label>
+            <input
+              v-model="bankAccountForm.bankName"
+              type="text"
+              placeholder="e.g., Chase, Wells Fargo"
+              style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+            />
+          </div>
+
+          <div style="margin: 20px 0; text-align: right;">
+            <button
               @click="closeAddBankAccountDialog"
-            />
-            <Button
-              :text="t('shared.add')"
-              color="primary"
+              style="margin-right: 10px; padding: 8px 16px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;"
+            >
+              Cancel
+            </button>
+            <button
               @click="addBankAccount"
-            />
+              style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+            >
+              Add Account
+            </button>
           </div>
         </div>
       </template>
