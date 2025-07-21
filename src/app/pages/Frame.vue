@@ -75,7 +75,7 @@
     <Dialog v-if="showAddBankAccount" @close="closeAddBankAccountDialog">
       <template #title>{{ t('bankAccounts.addBankAccount') }}</template>
       <template #content>
-        <Form :class="$style.bankAccountForm" @submit="addBankAccount">
+        <div :class="$style.bankAccountForm">
           <TextField
             :value="bankAccountForm.name"
             :label="t('bankAccounts.accountName')"
@@ -111,10 +111,10 @@
             <Button
               :text="t('shared.add')"
               color="primary"
-              type="submit"
+              @click="addBankAccount"
             />
           </div>
-        </Form>
+        </div>
       </template>
     </Dialog>
   </div>
