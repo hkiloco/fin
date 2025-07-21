@@ -70,6 +70,53 @@
         <ComponentTransition :is="Component" v-if="Component" />
       </RouterView>
     </div>
+
+    <!-- Add Bank Account Dialog -->
+    <Dialog v-if="showAddBankAccount" @close="closeAddBankAccountDialog">
+      <template #title>{{ t('bankAccounts.addBankAccount') }}</template>
+      <template #content>
+        <Form :class="$style.bankAccountForm" @submit="addBankAccount">
+          <TextField
+            :value="bankAccountForm.name"
+            :label="t('bankAccounts.accountName')"
+            required
+            @update:value="bankAccountForm.name = $event"
+          />
+          <TextField
+            :value="bankAccountForm.bankName"
+            :label="t('bankAccounts.bankName')"
+            required
+            @update:value="bankAccountForm.bankName = $event"
+          />
+          <Select
+            :value="bankAccountForm.accountType"
+            :options="accountTypeOptions"
+            :label="t('bankAccounts.accountType')"
+            required
+            @update:value="bankAccountForm.accountType = $event"
+          />
+          <TextField
+            :value="bankAccountForm.balance"
+            :label="t('bankAccounts.initialBalance')"
+            type="number"
+            step="0.01"
+            @update:value="bankAccountForm.balance = parseFloat($event) || 0"
+          />
+          <div :class="$style.formActions">
+            <Button
+              :text="t('shared.cancel')"
+              color="secondary"
+              @click="closeAddBankAccountDialog"
+            />
+            <Button
+              :text="t('shared.add')"
+              color="primary"
+              type="submit"
+            />
+          </div>
+        </Form>
+      </template>
+    </Dialog>
   </div>
 </template>
 
