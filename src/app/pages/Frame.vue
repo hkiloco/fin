@@ -73,46 +73,29 @@
 
     <!-- Add Bank Account Dialog -->
     <Dialog v-if="showAddBankAccount" @close="closeAddBankAccountDialog">
-      <template #title>{{ t('bankAccounts.addBankAccount') }}</template>
+      <template #title>Add Bank Account</template>
       <template #content>
         <div :class="$style.bankAccountForm">
-          <TextField
-            :value="bankAccountForm.name"
-            :label="t('bankAccounts.accountName')"
-            required
-            @update:value="bankAccountForm.name = $event"
-          />
-          <TextField
-            :value="bankAccountForm.bankName"
-            :label="t('bankAccounts.bankName')"
-            required
-            @update:value="bankAccountForm.bankName = $event"
-          />
-          <Select
-            :value="bankAccountForm.accountType"
-            :options="accountTypeOptions"
-            :label="t('bankAccounts.accountType')"
-            required
-            @update:value="bankAccountForm.accountType = $event"
-          />
-          <TextField
-            :value="bankAccountForm.balance"
-            :label="t('bankAccounts.initialBalance')"
-            type="number"
-            step="0.01"
-            @update:value="bankAccountForm.balance = parseFloat($event) || 0"
-          />
+          <p>Dialog is working! Debug value: {{ showAddBankAccount }}</p>
+          <div>
+            <label>Account Name:</label>
+            <input
+              v-model="bankAccountForm.name"
+              type="text"
+              placeholder="Enter account name"
+            />
+          </div>
+          <div>
+            <label>Bank Name:</label>
+            <input
+              v-model="bankAccountForm.bankName"
+              type="text"
+              placeholder="Enter bank name"
+            />
+          </div>
           <div :class="$style.formActions">
-            <Button
-              :text="t('shared.cancel')"
-              color="secondary"
-              @click="closeAddBankAccountDialog"
-            />
-            <Button
-              :text="t('shared.add')"
-              color="primary"
-              @click="addBankAccount"
-            />
+            <button @click="closeAddBankAccountDialog">Cancel</button>
+            <button @click="addBankAccount">Add Account</button>
           </div>
         </div>
       </template>
