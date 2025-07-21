@@ -67,6 +67,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', resize);
+  if (resizeTimeoutId) {
+    clearTimeout(resizeTimeoutId);
+  }
 });
 
 defineExpose({
