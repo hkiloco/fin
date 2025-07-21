@@ -22,7 +22,17 @@ const rootSize = useResizeObserver(root);
 const chart = shallowRef<EChartsType>();
 
 const update = () => chart.value?.setOption(props.options);
-const resize = () => chart.value?.resize();
+
+let resizeTimeoutId: number | undefined;
+const resize = () => {
+  if (resizeTimeoutId) {
+    clearTimeout(resizeTimeoutId);
+  }
+
+  resizeTimeoutId = window.setTimeout(() => {
+    chart.value?.resize();
+  }, 0);
+};
 
 const assertSvg = () => {
   if (!root.value || !chart.value) {
