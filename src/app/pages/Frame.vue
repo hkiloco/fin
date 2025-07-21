@@ -29,7 +29,7 @@
         :class="$style.btn"
         color="success"
         textual
-        @click="showAddBankAccount = true"
+        @click="openAddBankAccountDialog"
       />
 
       <!-- Bank Account List -->
