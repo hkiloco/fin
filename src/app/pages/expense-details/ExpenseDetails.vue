@@ -4,7 +4,9 @@
     <div :class="$style.header">
       <div :class="$style.accountHeader">
         <div :class="$style.accountInfo">
-          <h1 :class="$style.accountTitle">{{ t('expenseDetails.expenseTracker') }}</h1>
+          <h1 :class="$style.accountTitle">
+            {{ selectedBankAccountId ? selectedBankAccountName : t('expenseDetails.expenseTracker') }}
+          </h1>
           <div :class="$style.accountMeta">
             <span :class="$style.balance">
               {{ t('expenseDetails.totalExpenses') }}:
@@ -13,6 +15,9 @@
             <span :class="$style.uncleared">
               {{ t('expenseDetails.thisMonth') }}:
               <Currency :value="currentMonthExpenses" />
+            </span>
+            <span v-if="selectedBankAccountId" :class="$style.accountContext">
+              {{ t('expenseDetails.filteringBy') }}: {{ selectedBankAccountName }}
             </span>
           </div>
         </div>
