@@ -98,31 +98,29 @@
 </template>
 
 <script lang="ts" setup>
-import Pane from '@components/feature/Pane.vue';
-import YearToggle from '@components/feature/YearToggle.vue';
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
 import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
 import TextCell from '@components/base/text-cell/TextCell.vue';
-import Draggable from '@components/base/draggable/Draggable.vue';
-import CellMenu from '@components/base/cell-menu/CellMenu.vue';
-import { CellMenuActionId } from '@components/base/cell-menu/CellMenu.types';
 import {
-  RiAddCircleLine,
-  RiCloseCircleLine,
-  RiLockLine,
-  RiLockUnlockLine
+  RiAddLine,
+  RiDeleteBinLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
-import { useDataStore } from '@store/state';
-import { useMonthNames } from '@composables/useMonthNames.ts';
-import { useSettingsStore } from '@store/settings';
-import { useStateUtils } from '@composables/useStateUtils.ts';
 import { uuid } from '@utils/uuid.ts';
-import { sum, average } from '@utils/array/array.ts';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
+
+// Transaction interface
+interface Transaction {
+  id: string;
+  date: string;
+  payee: string;
+  category: string;
+  notes?: string;
+  amount: number;
+}
 
 const { state } = useDataStore();
 const { state: settings } = useSettingsStore();
