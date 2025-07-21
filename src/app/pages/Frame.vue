@@ -306,15 +306,51 @@ const addBankAccount = () => {
 
 .bankAccountForm {
   min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  padding: 20px;
+
+  > div {
+    margin-bottom: 12px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  p {
+    color: green;
+    font-weight: bold;
+  }
 }
 
 .formActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 20px;
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:first-child {
+      background: #ccc;
+    }
+
+    &:last-child {
+      background: #007bff;
+      color: white;
+    }
+  }
 }
 </style>
