@@ -392,7 +392,7 @@ const resetForm = () => {
   transactionForm.date = new Date().toISOString().split('T')[0];
   transactionForm.payee = '';
   transactionForm.category = '';
-  transactionForm.accountId = '';
+  transactionForm.accountId = selectedBankAccountId.value || '';
   transactionForm.amount = 0;
   transactionForm.notes = '';
 };
