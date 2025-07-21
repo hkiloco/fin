@@ -150,6 +150,17 @@ const menu = ref<HTMLDivElement>();
 const media = useMediaQuery();
 const { user } = useStorage();
 const { t } = useI18n();
+const $route = useRoute();
+const bankAccountStore = useBankAccountStore();
+
+// Bank account management state
+const showAddBankAccount = ref(false);
+const bankAccountForm = reactive({
+  name: '',
+  bankName: '',
+  accountType: 'checking' as 'checking' | 'savings' | 'credit' | 'investment',
+  balance: 0
+});
 
 interface FrameButton {
   icon: Component;
