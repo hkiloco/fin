@@ -242,6 +242,7 @@ import { sum } from '@utils/array/array.ts';
 import { uuid } from '@utils/uuid.ts';
 import { computed, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
 const { state } = useDataStore();
 const { state: settings } = useSettingsStore();
