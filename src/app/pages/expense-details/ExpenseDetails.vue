@@ -284,7 +284,7 @@ const transactionForm = reactive({
   date: new Date().toISOString().split('T')[0],
   payee: '',
   category: '',
-  accountId: '',
+  accountId: selectedBankAccountId.value || '',
   amount: 0,
   notes: ''
 });
