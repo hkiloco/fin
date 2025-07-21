@@ -301,12 +301,15 @@ const addBankAccount = () => {
 
 .bankAccountForm {
   min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .formActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 8px;
 }
 </style>
