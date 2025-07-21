@@ -168,47 +168,41 @@ const accountBalance = computed(() => {
   return initialBalance + transactionTotal;
 });
 
-// Methods for grid management
-const addCategory = () => {
-  transactionCategories.value.push({
+// Methods for transaction management
+const getAccountTypeLabel = (type?: string) => {
+  if (!type) return '';
+  return t(`bankAccounts.${type}`);
+};
+
+const addNewTransaction = () => {
+  const newTransaction: Transaction = {
     id: uuid(),
-    name: 'New Category',
-    values: new Array(12).fill(0)
-  });
+    date: new Date().toISOString().split('T')[0],
+    payee: '',
+    category: '',
+    notes: '',
+    amount: 0
+  };
+  transactions.value.unshift(newTransaction);
 };
 
-const removeCategory = (id: string) => {
-  const index = transactionCategories.value.findIndex(cat => cat.id === id);
-  if (index !== -1) {
-    transactionCategories.value.splice(index, 1);
+const updateTransaction = (id: string, field: keyof Transaction, value: string | number) => {
+  const transaction = transactions.value.find(t => t.id === id);
+  if (transaction) {
+    if (field === 'amount') {
+      transaction[field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+    } else {
+      (transaction as any)[field] = value;
+    }
   }
 };
 
-const updateCategoryName = (id: string, name: string) => {
-  const category = transactionCategories.value.find(cat => cat.id === id);
-  if (category) {
-    category.name = name;
-  }
-};
-
-const updateCategoryValue = (id: string, monthIndex: number, amount: number) => {
-  const category = transactionCategories.value.find(cat => cat.id === id);
-  if (category) {
-    category.values[monthIndex] = amount;
-  }
-};
-
-const performAction = (action: CellMenuActionId, categoryId: string, monthIndex: number, value: number) => {
-  const category = transactionCategories.value.find(cat => cat.id === categoryId);
-  if (!category) return;
-
-  switch (action) {
-    case 'fill':
-      category.values.fill(value);
-      break;
-    case 'fill-to-right':
-      category.values.fill(value, monthIndex);
-      break;
+const deleteTransaction = (id: string) => {
+  if (confirm(t('bankAccount.confirmDeleteTransaction'))) {
+    const index = transactions.value.findIndex(t => t.id === id);
+    if (index !== -1) {
+      transactions.value.splice(index, 1);
+    }
   }
 };
 </script>
