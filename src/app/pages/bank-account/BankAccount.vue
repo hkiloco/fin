@@ -122,13 +122,9 @@ interface Transaction {
   amount: number;
 }
 
-const { state } = useDataStore();
-const { state: settings } = useSettingsStore();
 const { t } = useI18n();
 const route = useRoute();
 const bankAccountStore = useBankAccountStore();
-const months = useMonthNames('long', () => settings.general.monthOffset);
-const { isCurrentMonth } = useStateUtils();
 
 // Get selected bank account
 const selectedBankAccountId = computed(() => route.query.accountId as string || '');
@@ -137,42 +133,39 @@ const selectedBankAccount = computed(() => {
   return bankAccountStore.getBankAccount(selectedBankAccountId.value);
 });
 
-const pageTitle = computed(() => {
-  return selectedBankAccount.value ? `${selectedBankAccount.value.name} - ${selectedBankAccount.value.bankName}` : 'Bank Account';
-});
-
-// Transaction categories storage (similar to budget groups but for bank transactions)
-const transactionCategories = ref([
-  { id: uuid(), name: 'Groceries', values: new Array(12).fill(0) },
-  { id: uuid(), name: 'Gas & Transportation', values: new Array(12).fill(0) },
-  { id: uuid(), name: 'Restaurants', values: new Array(12).fill(0) },
-  { id: uuid(), name: 'Shopping', values: new Array(12).fill(0) },
-  { id: uuid(), name: 'Bills & Utilities', values: new Array(12).fill(0) }
+// Transactions storage
+const transactions = ref<Transaction[]>([
+  {
+    id: uuid(),
+    date: '2024-01-15',
+    payee: 'Grocery Store',
+    category: 'Groceries',
+    notes: 'Weekly shopping',
+    amount: -125.50
+  },
+  {
+    id: uuid(),
+    date: '2024-01-14',
+    payee: 'Gas Station',
+    category: 'Transportation',
+    notes: '',
+    amount: -45.00
+  },
+  {
+    id: uuid(),
+    date: '2024-01-13',
+    payee: 'Salary Deposit',
+    category: 'Income',
+    notes: 'Monthly salary',
+    amount: 3500.00
+  }
 ]);
 
-// UI state
-const allowDelete = ref(false);
-
-// Computed values for grid
-const monthlyTotals = computed(() => {
-  const totals = new Array(12).fill(0);
-  transactionCategories.value.forEach(category => {
-    category.values.forEach((value, index) => {
-      totals[index] += value;
-    });
-  });
-  return totals;
-});
-
-const totalBalance = computed(() => {
-  return transactionCategories.value.reduce((total, category) =>
-    total + sum(category.values), 0
-  );
-});
-
-const averageBalance = computed(() => {
-  const total = totalBalance.value;
-  return total / 12;
+// Computed values
+const accountBalance = computed(() => {
+  const initialBalance = selectedBankAccount.value?.balance || 0;
+  const transactionTotal = transactions.value.reduce((sum, t) => sum + t.amount, 0);
+  return initialBalance + transactionTotal;
 });
 
 // Methods for grid management
