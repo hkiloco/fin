@@ -46,6 +46,11 @@
         @click="openAddBankAccountDialog"
       />
 
+      <!-- Debug indicator -->
+      <div v-if="showAddBankAccount" style="position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 5px; z-index: 9999;">
+        Dialog State: {{ showAddBankAccount }}
+      </div>
+
       <div v-if="media !== 'mobile'" style="flex-grow: 1" />
 
       <ToolsButton :class="$style.btn" />
