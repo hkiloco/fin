@@ -333,10 +333,25 @@ const categoryOptions = computed(() => {
 });
 
 const accountSelectOptions = computed(() => {
-  return state.expenses.map(account => ({
-    value: account.id,
-    label: account.name
-  }));
+  const options = [];
+
+  // Add bank accounts
+  bankAccountStore.accounts.value.forEach(account => {
+    options.push({
+      value: account.id,
+      label: `${account.name} (${account.bankName})`
+    });
+  });
+
+  // Add expense budget groups
+  state.expenses.forEach(account => {
+    options.push({
+      value: account.id,
+      label: account.name
+    });
+  });
+
+  return options;
 });
 
 const categorySelectOptions = computed(() => {
