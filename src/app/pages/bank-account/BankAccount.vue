@@ -142,74 +142,100 @@
       />
     </div>
 
-    <!-- Add/Edit Transaction Dialog -->
-    <Dialog v-if="showAddTransaction" @close="closeTransactionDialog">
-      <template #title>
-        {{ editingTransaction ? t('bankAccount.editTransaction') : t('bankAccount.addTransaction') }}
-      </template>
-      <template #content>
-        <div :class="$style.transactionForm">
-          <div :class="$style.formRow">
-            <TextField
-              :value="transactionForm.date"
-              :label="t('bankAccount.date')"
+    <!-- Add/Edit Transaction Modal -->
+    <div v-if="showAddTransaction" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 30px; border-radius: 8px; min-width: 500px; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;">
+        <h2 style="margin: 0 0 20px 0; color: #333; font-size: 24px;">
+          {{ editingTransaction ? 'Edit Transaction' : 'Add Transaction' }}
+        </h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Date *</label>
+            <input
+              v-model="transactionForm.date"
               type="date"
+              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
               required
-              @update:value="transactionForm.date = $event"
-            />
-            <TextField
-              :value="transactionForm.payee"
-              :label="t('bankAccount.payee')"
-              required
-              @update:value="transactionForm.payee = $event"
             />
           </div>
-          <div :class="$style.formRow">
-            <Select
-              :value="transactionForm.category"
-              :options="categorySelectOptions"
-              :label="t('bankAccount.category')"
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Payee/Description *</label>
+            <input
+              v-model="transactionForm.payee"
+              type="text"
+              placeholder="e.g., Grocery Store, Gas Station"
+              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
               required
-              @update:value="transactionForm.category = $event"
-            />
-            <Select
-              :value="transactionForm.type"
-              :options="transactionTypeOptions"
-              :label="t('bankAccount.type')"
-              required
-              @update:value="transactionForm.type = $event"
-            />
-          </div>
-          <div :class="$style.formRow">
-            <TextField
-              :value="transactionForm.amount"
-              :label="t('bankAccount.amount')"
-              type="number"
-              step="0.01"
-              required
-              @update:value="transactionForm.amount = parseFloat($event) || 0"
-            />
-          </div>
-          <TextField
-            :value="transactionForm.notes"
-            :label="t('bankAccount.notes')"
-            @update:value="transactionForm.notes = $event"
-          />
-          <div :class="$style.formActions">
-            <Button
-              :text="t('shared.cancel')"
-              color="secondary"
-              @click="closeTransactionDialog"
-            />
-            <Button
-              :text="editingTransaction ? t('shared.update') : t('shared.add')"
-              color="primary"
-              @click="saveTransaction"
             />
           </div>
         </div>
-      </template>
-    </Dialog>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Category *</label>
+            <select
+              v-model="transactionForm.category"
+              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+              required
+            >
+              <option value="">Select Category</option>
+              <option v-for="option in categorySelectOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Transaction Type *</label>
+            <select
+              v-model="transactionForm.type"
+              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+              required
+            >
+              <option value="expense">Expense (Money Out)</option>
+              <option value="income">Income (Money In)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Amount *</label>
+          <input
+            v-model="transactionForm.amount"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            required
+          />
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Notes (Optional)</label>
+          <textarea
+            v-model="transactionForm.notes"
+            placeholder="Additional details about this transaction..."
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; resize: vertical; min-height: 80px;"
+          ></textarea>
+        </div>
+
+        <div style="text-align: right; display: flex; gap: 12px; justify-content: flex-end;">
+          <button
+            @click="closeTransactionDialog"
+            style="padding: 12px 24px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; color: #555;"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveTransaction"
+            style="padding: 12px 24px; background: #28a745; color: white; border: 2px solid #28a745; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;"
+          >
+            {{ editingTransaction ? 'Update Transaction' : 'Add Transaction' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
