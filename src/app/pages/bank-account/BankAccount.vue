@@ -102,7 +102,10 @@
         </span>
         <span :class="$style.colNotes">{{ transaction.notes || '—' }}</span>
         <span :class="$style.colAmount">
-          <Currency :value="transaction.amount" :class="getAmountClass(transaction.amount)" />
+          <Currency
+            :value="transaction.type === 'income' ? transaction.amount : -transaction.amount"
+            :class="transaction.type === 'income' ? $style.incomeAmount : $style.expenseAmount"
+          />
         </span>
         <span :class="$style.colActions">
           <Button
