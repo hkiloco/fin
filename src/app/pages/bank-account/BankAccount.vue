@@ -342,13 +342,24 @@ const categoryOptions = computed(() => {
 
 const categorySelectOptions = computed(() => {
   const categories = new Set<string>();
+
+  // Add categories from expense budgets
   state.expenses.forEach(account => {
     account.budgets.forEach(budget => {
       categories.add(budget.name);
     });
   });
-  
-  return Array.from(categories).map(category => ({
+
+  // Add some default categories if none exist
+  if (categories.size === 0) {
+    const defaultCategories = [
+      'Groceries', 'Gas', 'Restaurants', 'Shopping', 'Entertainment',
+      'Bills', 'Healthcare', 'Transportation', 'Travel', 'Other'
+    ];
+    defaultCategories.forEach(cat => categories.add(cat));
+  }
+
+  return Array.from(categories).sort().map(category => ({
     value: category,
     label: category
   }));
