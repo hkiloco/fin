@@ -173,108 +173,26 @@ const transactionCategories = ref([
 // UI state
 const allowDelete = ref(false);
 
-// Form state
-const transactionForm = reactive({
-  date: new Date().toISOString().split('T')[0],
-  payee: '',
-  category: '',
-  type: 'expense' as 'expense' | 'income',
-  amount: 0,
-  notes: ''
-});
-
-// Computed values
-const currentBalance = computed(() => {
-  if (!selectedBankAccount.value) return 0;
-  const accountTransactions = transactions.value.filter(t => t.accountId === selectedBankAccountId.value);
-  return selectedBankAccount.value.balance + accountTransactions.reduce((sum, t) => {
-    return sum + (t.type === 'income' ? t.amount : -t.amount);
-  }, 0);
-});
-
-const currentMonthTransactions = computed(() => {
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  
-  return transactions.value
-    .filter(transaction => {
-      if (transaction.accountId !== selectedBankAccountId.value) return false;
-      const transactionDate = new Date(transaction.date);
-      return transactionDate.getMonth() === currentMonth && 
-             transactionDate.getFullYear() === currentYear;
-    })
-    .reduce((total, transaction) => total + (transaction.type === 'income' ? transaction.amount : -transaction.amount), 0);
-});
-
-const categoryOptions = computed(() => {
-  const options = [{ value: '', label: t('bankAccount.allCategories') }];
-  const categories = new Set<string>();
-  
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      categories.add(budget.name);
+// Computed values for grid
+const monthlyTotals = computed(() => {
+  const totals = new Array(12).fill(0);
+  transactionCategories.value.forEach(category => {
+    category.values.forEach((value, index) => {
+      totals[index] += value;
     });
   });
-  
-  Array.from(categories).forEach(category => {
-    options.push({ value: category, label: category });
-  });
-  
-  return options;
+  return totals;
 });
 
-const categorySelectOptions = computed(() => {
-  const categories = new Set<string>();
-
-  // Add categories from expense budgets
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      categories.add(budget.name);
-    });
-  });
-
-  // Add some default categories if none exist
-  if (categories.size === 0) {
-    const defaultCategories = [
-      'Groceries', 'Gas', 'Restaurants', 'Shopping', 'Entertainment',
-      'Bills', 'Healthcare', 'Transportation', 'Travel', 'Other'
-    ];
-    defaultCategories.forEach(cat => categories.add(cat));
-  }
-
-  return Array.from(categories).sort().map(category => ({
-    value: category,
-    label: category
-  }));
+const totalBalance = computed(() => {
+  return transactionCategories.value.reduce((total, category) =>
+    total + sum(category.values), 0
+  );
 });
 
-const transactionTypeOptions = computed(() => [
-  { value: 'expense', label: t('bankAccount.expense') },
-  { value: 'income', label: t('bankAccount.income') }
-]);
-
-const filteredTransactions = computed(() => {
-  return transactions.value.filter(transaction => {
-    if (transaction.accountId !== selectedBankAccountId.value) return false;
-    if (selectedCategory.value && transaction.category !== selectedCategory.value) {
-      return false;
-    }
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase();
-      return transaction.payee.toLowerCase().includes(query) ||
-             transaction.notes?.toLowerCase().includes(query) ||
-             transaction.category.toLowerCase().includes(query);
-    }
-    return true;
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-});
-
-const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / itemsPerPage));
-
-const paginatedTransactions = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return filteredTransactions.value.slice(start, end);
+const averageBalance = computed(() => {
+  const total = totalBalance.value;
+  return total / 12;
 });
 
 // Methods
