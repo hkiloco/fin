@@ -246,185 +246,190 @@ import { useI18n } from 'vue-i18n';
 const { state } = useDataStore();
 const { state: settings } = useSettingsStore();
 const { t } = useI18n();
-const router = useRouter();
 const months = useMonthNames('long', () => settings.general.monthOffset);
 
+// Transaction storage (in real app, this would be in a store)
+const transactions = ref<Transaction[]>([]);
+
+// UI state
+const showAddTransaction = ref(false);
+const showFilters = ref(false);
+const editingTransaction = ref<Transaction | null>(null);
+const currentPage = ref(1);
+const itemsPerPage = 20;
+
+// Filter state
+const selectedAccount = ref('');
+const selectedCategory = ref('');
+const searchQuery = ref('');
+
+// Form state
+const transactionForm = reactive({
+  date: new Date().toISOString().split('T')[0],
+  payee: '',
+  category: '',
+  accountId: '',
+  amount: 0,
+  notes: ''
+});
+
+// Computed values
 const totalExpenses = computed(() => {
-  return state.expenses.reduce((total, account) => 
-    total + getAccountTotal(account), 0
-  );
+  return transactions.value.reduce((total, transaction) => total + transaction.amount, 0);
 });
 
-const activeAccountsCount = computed(() => {
-  return state.expenses.filter(account => 
-    getAccountTotal(account) > 0
-  ).length;
+const currentMonthExpenses = computed(() => {
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  return transactions.value
+    .filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      return transactionDate.getMonth() === currentMonth &&
+             transactionDate.getFullYear() === currentYear;
+    })
+    .reduce((total, transaction) => total + transaction.amount, 0);
 });
 
-const averageMonthlyExpense = computed(() => {
-  const monthlyTotals = new Array(12).fill(0);
-  
+const accountOptions = computed(() => {
+  const options = [{ value: '', label: t('expenseDetails.allAccounts') }];
   state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      budget.values.forEach((value, index) => {
-        monthlyTotals[index] += value;
-      });
-    });
+    options.push({ value: account.id, label: account.name });
   });
-  
-  const nonZeroMonths = monthlyTotals.filter(total => total > 0);
-  return nonZeroMonths.length > 0 ? sum(monthlyTotals) / nonZeroMonths.length : 0;
+  return options;
 });
 
-const sortedAccounts = computed(() => {
-  return [...state.expenses].sort((a, b) => getAccountTotal(b) - getAccountTotal(a));
-});
+const categoryOptions = computed(() => {
+  const options = [{ value: '', label: t('expenseDetails.allCategories') }];
+  const categories = new Set<string>();
 
-const monthlyTrendChart = computed(() => {
-  const monthlyTotals = new Array(12).fill(0);
-  
   state.expenses.forEach(account => {
     account.budgets.forEach(budget => {
-      budget.values.forEach((value, index) => {
-        monthlyTotals[index] += value;
-      });
+      categories.add(budget.name);
     });
   });
 
-  return {
-    xAxis: {
-      type: 'category',
-      data: months.value
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [{
-      data: monthlyTotals,
-      type: 'line',
-      smooth: true,
-      itemStyle: {
-        color: '#6bb1ff'
-      }
-    }],
-    tooltip: {
-      trigger: 'axis'
+  Array.from(categories).forEach(category => {
+    options.push({ value: category, label: category });
+  });
+
+  return options;
+});
+
+const accountSelectOptions = computed(() => {
+  return state.expenses.map(account => ({
+    value: account.id,
+    label: account.name
+  }));
+});
+
+const categorySelectOptions = computed(() => {
+  const categories = new Set<string>();
+  state.expenses.forEach(account => {
+    account.budgets.forEach(budget => {
+      categories.add(budget.name);
+    });
+  });
+
+  return Array.from(categories).map(category => ({
+    value: category,
+    label: category
+  }));
+});
+
+const filteredTransactions = computed(() => {
+  return transactions.value.filter(transaction => {
+    if (selectedAccount.value && transaction.accountId !== selectedAccount.value) {
+      return false;
     }
-  };
-});
-
-const categoryBreakdownChart = computed(() => {
-  const categoryTotals: { name: string; value: number }[] = [];
-  
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      const total = sum(budget.values);
-      if (total > 0) {
-        categoryTotals.push({
-          name: `${account.name} - ${budget.name}`,
-          value: total
-        });
-      }
-    });
-  });
-
-  categoryTotals.sort((a, b) => b.value - a.value);
-  const topCategories = categoryTotals.slice(0, 10);
-
-  return {
-    series: [{
-      type: 'pie',
-      data: topCategories,
-      radius: ['40%', '70%']
-    }],
-    tooltip: {
-      trigger: 'item'
+    if (selectedCategory.value && transaction.category !== selectedCategory.value) {
+      return false;
     }
-  };
+    if (searchQuery.value) {
+      const query = searchQuery.value.toLowerCase();
+      return transaction.payee.toLowerCase().includes(query) ||
+             transaction.notes?.toLowerCase().includes(query) ||
+             transaction.category.toLowerCase().includes(query);
+    }
+    return true;
+  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 });
 
-const getAccountTotal = (account: BudgetGroup) => {
-  return account.budgets.reduce((total, budget) => total + sum(budget.values), 0);
+const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / itemsPerPage));
+
+const paginatedTransactions = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredTransactions.value.slice(start, end);
+});
+
+// Methods
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
 };
 
-const getMaxCategoryValue = (category: Budget) => {
-  return Math.max(...category.values);
+const resetForm = () => {
+  transactionForm.date = new Date().toISOString().split('T')[0];
+  transactionForm.payee = '';
+  transactionForm.category = '';
+  transactionForm.accountId = '';
+  transactionForm.amount = 0;
+  transactionForm.notes = '';
 };
 
-const getBarHeight = (value: number, maxValue: number) => {
-  if (maxValue === 0) return '0px';
-  return `${(value / maxValue) * 30}px`;
+const closeTransactionDialog = () => {
+  showAddTransaction.value = false;
+  editingTransaction.value = null;
+  resetForm();
 };
 
-const getMonthName = (index: number) => {
-  return months.value[index];
+const saveTransaction = () => {
+  if (editingTransaction.value) {
+    // Edit existing transaction
+    const index = transactions.value.findIndex(t => t.id === editingTransaction.value!.id);
+    if (index !== -1) {
+      transactions.value[index] = {
+        ...editingTransaction.value,
+        ...transactionForm
+      };
+    }
+  } else {
+    // Add new transaction
+    const newTransaction: Transaction = {
+      id: uuid(),
+      ...transactionForm,
+      type: 'expense'
+    };
+    transactions.value.push(newTransaction);
+  }
+
+  closeTransactionDialog();
 };
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: state.currency
-  }).format(value);
+const editTransaction = (transaction: Transaction) => {
+  editingTransaction.value = transaction;
+  Object.assign(transactionForm, transaction);
+  showAddTransaction.value = true;
 };
 
-const getHighestExpenseMonth = () => {
-  const monthlyTotals = new Array(12).fill(0);
-  
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      budget.values.forEach((value, index) => {
-        monthlyTotals[index] += value;
-      });
-    });
-  });
-
-  const maxIndex = monthlyTotals.indexOf(Math.max(...monthlyTotals));
-  const maxValue = monthlyTotals[maxIndex];
-  return maxValue > 0 ? `${months.value[maxIndex]} (${formatCurrency(maxValue)})` : t('expenseDetails.noData');
+const deleteTransaction = (id: string) => {
+  if (confirm(t('expenseDetails.confirmDeleteTransaction'))) {
+    const index = transactions.value.findIndex(t => t.id === id);
+    if (index !== -1) {
+      transactions.value.splice(index, 1);
+    }
+  }
 };
 
-const getLowestExpenseMonth = () => {
-  const monthlyTotals = new Array(12).fill(0);
-  
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      budget.values.forEach((value, index) => {
-        monthlyTotals[index] += value;
-      });
-    });
-  });
-
-  const nonZeroTotals = monthlyTotals.filter(total => total > 0);
-  if (nonZeroTotals.length === 0) return t('expenseDetails.noData');
-  
-  const minValue = Math.min(...nonZeroTotals);
-  const minIndex = monthlyTotals.indexOf(minValue);
-  return `${months.value[minIndex]} (${formatCurrency(minValue)})`;
-};
-
-const getLargestCategory = () => {
-  let maxCategory = { name: '', accountName: '', total: 0 };
-  
-  state.expenses.forEach(account => {
-    account.budgets.forEach(budget => {
-      const total = sum(budget.values);
-      if (total > maxCategory.total) {
-        maxCategory = {
-          name: budget.name,
-          accountName: account.name,
-          total
-        };
-      }
-    });
-  });
-
-  return maxCategory.total > 0 
-    ? `${maxCategory.accountName} - ${maxCategory.name} (${formatCurrency(maxCategory.total)})`
-    : t('expenseDetails.noData');
-};
-
-const goToExpenses = () => {
-  router.push('/expenses');
+const exportTransactions = () => {
+  const data = JSON.stringify(transactions.value, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `transactions-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 };
 </script>
 
