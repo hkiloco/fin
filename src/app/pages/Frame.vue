@@ -26,11 +26,14 @@
         :icon="RiAddLine"
         :tooltip="t('bankAccounts.addBankAccount')"
         tooltipPosition="right"
-        :class="$style.btn"
+        :class="[$style.btn, { [$style.clicked]: showAddBankAccount }]"
         color="success"
         textual
         @click="openAddBankAccountDialog"
       />
+
+      <!-- Debug text -->
+      <div v-if="showAddBankAccount" style="color: red; font-size: 12px;">Dialog should be open</div>
 
       <!-- Bank Account List -->
       <Link
