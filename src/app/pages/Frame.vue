@@ -215,10 +215,7 @@ const resetBankAccountForm = () => {
 };
 
 const openAddBankAccountDialog = () => {
-  alert('Add Bank Account button clicked!');
-  console.log('Button clicked, opening dialog');
   showAddBankAccount.value = true;
-  console.log('showAddBankAccount is now:', showAddBankAccount.value);
 };
 
 const closeAddBankAccountDialog = () => {
