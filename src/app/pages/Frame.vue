@@ -174,6 +174,37 @@ const buttons = computed((): FrameButton[] => [
   { icon: RiShoppingBagLine, name: 'expenses', tooltip: t('page.expenses.title') },
   { icon: RiBarChartBoxLine, name: 'expense-details', tooltip: t('expenses.expenseTrackingDetails') }
 ]);
+
+const accountTypeOptions = computed(() => [
+  { value: 'checking', label: t('bankAccounts.checking') },
+  { value: 'savings', label: t('bankAccounts.savings') },
+  { value: 'credit', label: t('bankAccounts.credit') },
+  { value: 'investment', label: t('bankAccounts.investment') }
+]);
+
+const resetBankAccountForm = () => {
+  bankAccountForm.name = '';
+  bankAccountForm.bankName = '';
+  bankAccountForm.accountType = 'checking';
+  bankAccountForm.balance = 0;
+};
+
+const closeAddBankAccountDialog = () => {
+  showAddBankAccount.value = false;
+  resetBankAccountForm();
+};
+
+const addBankAccount = () => {
+  if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
+    bankAccountStore.addBankAccount({
+      name: bankAccountForm.name.trim(),
+      bankName: bankAccountForm.bankName.trim(),
+      accountType: bankAccountForm.accountType,
+      balance: bankAccountForm.balance
+    });
+    closeAddBankAccountDialog();
+  }
+};
 </script>
 
 <style lang="scss" module>
