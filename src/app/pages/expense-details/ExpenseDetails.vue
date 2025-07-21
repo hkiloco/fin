@@ -241,6 +241,7 @@ import {
 import { useDataStore } from '@store/state';
 import { BudgetGroup } from '@store/state/types';
 import { Transaction } from '@store/state/transaction-types';
+import { useBankAccountStore } from '@store/bank-accounts';
 import { useMonthNames } from '@composables/useMonthNames.ts';
 import { useSettingsStore } from '@store/settings';
 import { sum } from '@utils/array/array.ts';
