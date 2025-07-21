@@ -21,21 +21,7 @@
       <!-- Bank Accounts Section -->
       <div v-if="media !== 'mobile'" :class="$style.divider" />
 
-      <!-- Add Bank Account Button -->
-      <Button
-        :icon="RiAddLine"
-        :tooltip="t('bankAccounts.addBankAccount')"
-        tooltipPosition="right"
-        :class="[$style.btn, { [$style.clicked]: showAddBankAccount }]"
-        color="success"
-        textual
-        @click="openAddBankAccountDialog"
-      />
-
-      <!-- Debug text -->
-      <div v-if="showAddBankAccount" style="color: red; font-size: 12px;">Dialog should be open</div>
-
-      <!-- Bank Account List -->
+      <!-- Bank Account List (Above Add Button) -->
       <Link
         v-for="account in bankAccountStore.accounts.value"
         :key="account.id"
@@ -45,8 +31,19 @@
         :class="[$style.btn, $style.bankAccountBtn]"
         :color="(currentRoute) => (currentRoute && $route.query.accountId === account.id ? 'primary' : 'dimmed')"
         :icon="RiBankLine"
-        name="expense-details"
+        name="bank-account"
         :query="{ accountId: account.id }"
+      />
+
+      <!-- Add Bank Account Button (Below Bank Accounts) -->
+      <Button
+        :icon="RiAddLine"
+        :tooltip="t('bankAccounts.addBankAccount')"
+        tooltipPosition="right"
+        :class="$style.btn"
+        color="success"
+        textual
+        @click="openAddBankAccountDialog"
       />
 
       <div v-if="media !== 'mobile'" style="flex-grow: 1" />
