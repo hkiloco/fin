@@ -142,8 +142,8 @@ import {
   RiAccountBoxLine,
   RiInformationLine,
   RiArrowLeftLine,
-  RiTrendingUpLine,
-  RiTrendingDownLine,
+  RiArrowUpDoubleLine,
+  RiArrowDownDoubleLine,
   RiPieChartLine
 } from '@remixicon/vue';
 import { useDataStore } from '@store/state';
