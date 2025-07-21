@@ -24,6 +24,11 @@ export const router = createRouter({
       component: () => import('./app/pages/expense-details/ExpenseDetails.vue')
     },
     {
+      path: '/bank-account',
+      name: 'bank-account',
+      component: () => import('./app/pages/bank-account/BankAccount.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/'
     }
