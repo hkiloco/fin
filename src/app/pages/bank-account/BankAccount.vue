@@ -413,15 +413,34 @@ const closeTransactionDialog = () => {
 };
 
 const saveTransaction = () => {
-  if (!selectedBankAccountId.value) return;
-  
+  if (!selectedBankAccountId.value) {
+    alert('No bank account selected!');
+    return;
+  }
+
+  // Validate required fields
+  if (!transactionForm.date || !transactionForm.payee || !transactionForm.category || !transactionForm.amount) {
+    alert('Please fill in all required fields (Date, Payee, Category, Amount)');
+    return;
+  }
+
+  if (transactionForm.amount <= 0) {
+    alert('Amount must be greater than 0');
+    return;
+  }
+
   if (editingTransaction.value) {
     // Edit existing transaction
     const index = transactions.value.findIndex(t => t.id === editingTransaction.value!.id);
     if (index !== -1) {
       transactions.value[index] = {
         ...editingTransaction.value,
-        ...transactionForm,
+        date: transactionForm.date,
+        payee: transactionForm.payee,
+        category: transactionForm.category,
+        type: transactionForm.type,
+        amount: Number(transactionForm.amount),
+        notes: transactionForm.notes,
         accountId: selectedBankAccountId.value
       };
     }
@@ -429,12 +448,17 @@ const saveTransaction = () => {
     // Add new transaction
     const newTransaction: Transaction = {
       id: uuid(),
-      ...transactionForm,
+      date: transactionForm.date,
+      payee: transactionForm.payee,
+      category: transactionForm.category,
+      type: transactionForm.type,
+      amount: Number(transactionForm.amount),
+      notes: transactionForm.notes,
       accountId: selectedBankAccountId.value
     };
     transactions.value.push(newTransaction);
   }
-  
+
   closeTransactionDialog();
 };
 
