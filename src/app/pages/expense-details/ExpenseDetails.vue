@@ -355,6 +355,10 @@ const categorySelectOptions = computed(() => {
 
 const filteredTransactions = computed(() => {
   return transactions.value.filter(transaction => {
+    // Filter by bank account if viewing specific account
+    if (selectedBankAccountId.value && transaction.accountId !== selectedBankAccountId.value) {
+      return false;
+    }
     if (selectedAccount.value && transaction.accountId !== selectedAccount.value) {
       return false;
     }
