@@ -124,6 +124,22 @@
     "confirmDeleteAccount": "Are you sure you want to delete the account '{name}'? This action cannot be undone.",
     "expenseTrackingDetails": "Expense Tracking Details"
   },
+  "expenseDetails": {
+    "totalExpenses": "Total Expenses",
+    "activeAccounts": "Active Accounts",
+    "avgMonthlyExpense": "Avg Monthly Expense",
+    "monthlyTrend": "Monthly Expense Trend",
+    "categoryBreakdown": "Category Breakdown (Top 10)",
+    "accountsOverview": "Accounts Overview",
+    "noExpenseData": "No expense data available. Start by adding some expenses.",
+    "goToExpenses": "Go to Expenses",
+    "categories": "categories",
+    "insights": "Insights",
+    "highestMonth": "Highest Expense Month",
+    "lowestMonth": "Lowest Expense Month",
+    "largestCategory": "Largest Category",
+    "noData": "No data available"
+  },
   "page": {
     "income": {
       "title": "Income",
