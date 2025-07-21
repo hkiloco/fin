@@ -76,51 +76,73 @@
       </RouterView>
     </div>
 
-    <!-- Add Bank Account Dialog -->
-    <Dialog v-if="showAddBankAccount" @close="closeAddBankAccountDialog">
-      <template #title>Add Bank Account</template>
-      <template #content>
-        <div style="padding: 20px; min-width: 300px;">
-          <h3>Create New Bank Account</h3>
-          <p>Dialog is showing! Debug value: {{ showAddBankAccount }}</p>
+    <!-- Add Bank Account Modal -->
+    <div v-if="showAddBankAccount" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 30px; border-radius: 8px; min-width: 400px; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0 0 20px 0; color: #333; font-size: 24px;">Add Bank Account</h2>
 
-          <div style="margin: 10px 0;">
-            <label style="display: block; margin-bottom: 5px;">Account Name:</label>
-            <input
-              v-model="bankAccountForm.name"
-              type="text"
-              placeholder="e.g., Personal Checking"
-              style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-            />
-          </div>
-
-          <div style="margin: 10px 0;">
-            <label style="display: block; margin-bottom: 5px;">Bank Name:</label>
-            <input
-              v-model="bankAccountForm.bankName"
-              type="text"
-              placeholder="e.g., Chase, Wells Fargo"
-              style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-            />
-          </div>
-
-          <div style="margin: 20px 0; text-align: right;">
-            <button
-              @click="closeAddBankAccountDialog"
-              style="margin-right: 10px; padding: 8px 16px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;"
-            >
-              Cancel
-            </button>
-            <button
-              @click="addBankAccount"
-              style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
-            >
-              Add Account
-            </button>
-          </div>
+        <div style="margin: 15px 0;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Account Name *</label>
+          <input
+            v-model="bankAccountForm.name"
+            type="text"
+            placeholder="e.g., Personal Checking, Business Savings"
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            required
+          />
         </div>
-      </template>
-    </Dialog>
+
+        <div style="margin: 15px 0;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Bank Name *</label>
+          <input
+            v-model="bankAccountForm.bankName"
+            type="text"
+            placeholder="e.g., Chase, Wells Fargo, Bank of America"
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            required
+          />
+        </div>
+
+        <div style="margin: 15px 0;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Account Type</label>
+          <select
+            v-model="bankAccountForm.accountType"
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+          >
+            <option value="checking">Checking Account</option>
+            <option value="savings">Savings Account</option>
+            <option value="credit">Credit Card</option>
+            <option value="investment">Investment Account</option>
+          </select>
+        </div>
+
+        <div style="margin: 15px 0;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Initial Balance (Optional)</label>
+          <input
+            v-model="bankAccountForm.balance"
+            type="number"
+            step="0.01"
+            placeholder="0.00"
+            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+          />
+        </div>
+
+        <div style="margin: 30px 0 0 0; text-align: right; display: flex; gap: 12px; justify-content: flex-end;">
+          <button
+            @click="closeAddBankAccountDialog"
+            style="padding: 12px 24px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; color: #555;"
+          >
+            Cancel
+          </button>
+          <button
+            @click="addBankAccount"
+            style="padding: 12px 24px; background: #007bff; color: white; border: 2px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;"
+          >
+            Add Account
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
