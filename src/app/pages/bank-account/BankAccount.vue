@@ -257,6 +257,47 @@ const deleteTransaction = (id: string) => {
   font-weight: var(--font-weight-m);
 }
 
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+  padding: 0 24px;
+}
+
+.summaryCard {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summaryLabel {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-l);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summaryValue {
+  color: white;
+  font-size: var(--font-size-l);
+  font-weight: var(--font-weight-xl);
+
+  &.income {
+    color: #10B981;
+  }
+
+  &.expense {
+    color: #EF4444;
+  }
+}
+
 .transactionContainer {
   flex: 1;
   display: flex;
