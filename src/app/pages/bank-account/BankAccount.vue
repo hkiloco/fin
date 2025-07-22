@@ -1,5 +1,10 @@
 <template>
-  <div :class="$style.bankAccount">
+  <div v-if="!accountSlug || !selectedBankAccount" :class="$style.errorState">
+    <h2>{{ t('bankAccount.noAccountFound') }}</h2>
+    <p>{{ t('bankAccount.noAccountFoundMessage') }}</p>
+    <Button :text="t('common.goBack')" @click="$router.push('/')" />
+  </div>
+  <div v-else :class="$style.bankAccount">
     <!-- Header -->
     <div :class="$style.header">
       <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
