@@ -143,7 +143,7 @@ import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine,
 import { useStorage } from '@storage/index';
 import { useBankAccountStore } from '@store/bank-accounts';
 import { computed, ref, reactive } from 'vue';
-import { createAccountSlug } from '@utils/bankAccountRoutes.ts';
+
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import type { Component } from 'vue';
@@ -156,14 +156,7 @@ const $route = useRoute();
 const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
 
-// Expose utility function to template
-const { createAccountSlug } = { createAccountSlug };
 
-// Check if current route matches bank account
-const isCurrentBankAccount = (accountName: string): boolean => {
-  const expectedPath = `/bank-${createAccountSlug(accountName)}`;
-  return $route.path === expectedPath;
-};
 
 // Bank account management state
 const showAddBankAccount = ref(false);
