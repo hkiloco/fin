@@ -73,73 +73,52 @@
       </RouterView>
     </div>
 
-    <!-- Add Bank Account Modal -->
-    <div v-if="showAddBankAccount" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-      <div style="background: white; padding: 30px; border-radius: 8px; min-width: 400px; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-        <h2 style="margin: 0 0 20px 0; color: #333; font-size: 24px;">Add Bank Account</h2>
+    <!-- Add Bank Account Dialog -->
+    <Dialog :open="showAddBankAccount" :title="t('bankAccounts.addBankAccount')" @close="closeAddBankAccountDialog">
+      <div :class="$style.bankAccountDialog">
+        <TextField
+          v-model="bankAccountForm.name"
+          :label="t('bankAccounts.accountName')"
+          :placeholder="t('bankAccounts.accountNamePlaceholder')"
+          required
+        />
 
-        <div style="margin: 15px 0;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Account Name *</label>
-          <input
-            v-model="bankAccountForm.name"
-            type="text"
-            placeholder="e.g., Personal Checking, Business Savings"
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-            required
-          />
-        </div>
+        <TextField
+          v-model="bankAccountForm.bankName"
+          :label="t('bankAccounts.bankName')"
+          :placeholder="t('bankAccounts.bankNamePlaceholder')"
+          required
+        />
 
-        <div style="margin: 15px 0;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Bank Name *</label>
-          <input
-            v-model="bankAccountForm.bankName"
-            type="text"
-            placeholder="e.g., Chase, Wells Fargo, Bank of America"
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-            required
-          />
-        </div>
+        <Select
+          v-model="bankAccountForm.accountType"
+          :label="t('bankAccounts.accountType')"
+          :options="accountTypeOptions"
+        />
 
-        <div style="margin: 15px 0;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Account Type</label>
-          <select
-            v-model="bankAccountForm.accountType"
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-          >
-            <option value="checking">Checking Account</option>
-            <option value="savings">Savings Account</option>
-            <option value="credit">Credit Card</option>
-            <option value="investment">Investment Account</option>
-          </select>
-        </div>
+        <TextField
+          v-model="bankAccountForm.balance"
+          type="number"
+          :label="t('bankAccounts.initialBalance')"
+          :placeholder="t('bankAccounts.initialBalancePlaceholder')"
+        />
 
-        <div style="margin: 15px 0;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Initial Balance (Optional)</label>
-          <input
-            v-model="bankAccountForm.balance"
-            type="number"
-            step="0.01"
-            placeholder="0.00"
-            style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
-          />
-        </div>
-
-        <div style="margin: 30px 0 0 0; text-align: right; display: flex; gap: 12px; justify-content: flex-end;">
-          <button
+        <div :class="$style.dialogActions">
+          <Button
+            color="dimmed"
             @click="closeAddBankAccountDialog"
-            style="padding: 12px 24px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; color: #555;"
           >
-            Cancel
-          </button>
-          <button
+            {{ t('common.cancel') }}
+          </Button>
+          <Button
+            color="primary"
             @click="addBankAccount"
-            style="padding: 12px 24px; background: #007bff; color: white; border: 2px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;"
           >
-            Add Account
-          </button>
+            {{ t('bankAccounts.addAccount') }}
+          </Button>
         </div>
       </div>
-    </div>
+    </Dialog>
   </div>
 </template>
 
