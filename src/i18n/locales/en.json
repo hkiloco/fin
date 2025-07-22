@@ -193,7 +193,9 @@
     "editTransaction": "Edit Transaction",
     "confirmDeleteTransaction": "Are you sure you want to delete this transaction?",
     "pageOf": "Page {current} of {total}",
-    "filteringBy": "Filtering by"
+    "filteringBy": "Filtering by",
+    "noAccountFound": "Bank Account Not Found",
+    "noAccountFoundMessage": "The requested bank account could not be found. Please check the URL or select a valid account from the navigation."
   },
   "page": {
     "income": {
