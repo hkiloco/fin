@@ -15,6 +15,32 @@
           {{ t('bankAccount.balance') }}: <Currency :value="accountBalance" />
         </span>
       </div>
+
+      <!-- Transaction Summary -->
+      <div v-if="accountSummary" :class="$style.summaryCards">
+        <div :class="$style.summaryCard">
+          <span :class="$style.summaryLabel">{{ t('bankAccount.totalIncome') }}</span>
+          <span :class="[$style.summaryValue, $style.income]">
+            <Currency :value="accountSummary.income" />
+          </span>
+        </div>
+        <div :class="$style.summaryCard">
+          <span :class="$style.summaryLabel">{{ t('bankAccount.totalExpenses') }}</span>
+          <span :class="[$style.summaryValue, $style.expense]">
+            <Currency :value="accountSummary.expenses" />
+          </span>
+        </div>
+        <div :class="$style.summaryCard">
+          <span :class="$style.summaryLabel">{{ t('bankAccount.netChange') }}</span>
+          <span :class="[$style.summaryValue, accountSummary.net >= 0 ? $style.income : $style.expense]">
+            <Currency :value="accountSummary.net" />
+          </span>
+        </div>
+        <div :class="$style.summaryCard">
+          <span :class="$style.summaryLabel">{{ t('bankAccount.transactionCount') }}</span>
+          <span :class="$style.summaryValue">{{ accountSummary.totalTransactions }}</span>
+        </div>
+      </div>
     </div>
 
     <!-- Transaction Table -->
