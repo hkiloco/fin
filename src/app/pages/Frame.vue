@@ -158,6 +158,12 @@ const bankAccountStore = useBankAccountStore();
 // Expose utility function to template
 const { createAccountSlug } = { createAccountSlug };
 
+// Check if current route matches bank account
+const isCurrentBankAccount = (accountName: string): boolean => {
+  const expectedPath = `/bank-${createAccountSlug(accountName)}`;
+  return $route.path === expectedPath;
+};
+
 // Bank account management state
 const showAddBankAccount = ref(false);
 const bankAccountForm = reactive({
