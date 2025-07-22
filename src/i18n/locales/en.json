@@ -99,6 +99,14 @@
       "updateApp": "Update app"
     }
   },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close"
+  },
   "shared": {
     "addGroup": "Add Group",
     "append": "Move “{from}” after “{to}”",
