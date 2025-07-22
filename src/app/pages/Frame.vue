@@ -22,18 +22,19 @@
       <div v-if="media !== 'mobile'" :class="$style.divider" />
 
       <!-- Bank Account List (Above Add Button) -->
-      <Link
+      <RouterLink
         v-for="account in bankAccountStore.accounts.value"
         :key="account.id"
-        :tooltip="account.name"
-        tooltipPosition="right"
-        testId="bank-account"
-        :class="[$style.btn, $style.bankAccountBtn]"
-        :color="(currentRoute) => 'dimmed'"
-        :icon="RiBankLine"
-        name="bank-account"
-        :query="{ accountId: account.id }"
-      />
+        :to="`/bank-${createAccountSlug(account.name)}`"
+        :class="[
+          $style.btn,
+          $style.bankAccountBtn,
+          { [$style.active]: isCurrentBankAccount(account.name) }
+        ]"
+        v-tooltip="{ text: account.name, position: 'right' }"
+      >
+        <RiBankLine />
+      </RouterLink>
 
       <!-- Add Bank Account Button (Below Bank Accounts) -->
       <Button
@@ -143,9 +144,11 @@ import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine,
 import { useStorage } from '@storage/index';
 import { useBankAccountStore } from '@store/bank-accounts';
 import { computed, ref, reactive } from 'vue';
+import { RouterLink } from 'vue-router';
+import { createAccountSlug } from '@utils/bankAccountRoutes.ts';
 
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import type { Component } from 'vue';
 
 const menu = ref<HTMLDivElement>();
@@ -153,7 +156,14 @@ const media = useMediaQuery();
 const { user } = useStorage();
 const { t } = useI18n();
 const $route = useRoute();
+const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
+
+// Function to check if current route matches bank account
+const isCurrentBankAccount = (accountName: string): boolean => {
+  const expectedPath = `/bank-${createAccountSlug(accountName)}`;
+  return $route.path === expectedPath;
+};
 
 
 
@@ -204,13 +214,17 @@ const closeAddBankAccountDialog = () => {
 
 const addBankAccount = () => {
   if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
-    bankAccountStore.addBankAccount({
+    const newAccount = bankAccountStore.addBankAccount({
       name: bankAccountForm.name.trim(),
       bankName: bankAccountForm.bankName.trim(),
       accountType: bankAccountForm.accountType,
       balance: bankAccountForm.balance
     });
     closeAddBankAccountDialog();
+
+    // Navigate to the new bank account page
+    const accountSlug = createAccountSlug(newAccount.name);
+    $router.push(`/bank-${accountSlug}`);
   }
 };
 </script>
