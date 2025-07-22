@@ -24,7 +24,7 @@ export const router = createRouter({
       component: () => import('./app/pages/expense-details/ExpenseDetails.vue')
     },
     {
-      path: '/bank-account',
+      path: '/bank-:accountSlug',
       name: 'bank-account',
       component: () => import('./app/pages/bank-account/BankAccount.vue')
     },
