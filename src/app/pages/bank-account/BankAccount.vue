@@ -130,6 +130,7 @@ interface Transaction {
 
 const { t } = useI18n();
 const route = useRoute();
+const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
 
 // Get selected bank account from route parameter
