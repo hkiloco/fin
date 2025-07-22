@@ -153,7 +153,6 @@ const media = useMediaQuery();
 const { user } = useStorage();
 const { t } = useI18n();
 const $route = useRoute();
-const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
 
 
