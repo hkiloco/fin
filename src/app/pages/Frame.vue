@@ -351,6 +351,17 @@ const addBankAccount = () => {
 }
 
 .bankAccountBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--c-dimmed);
+  transition: color var(--transition-m);
+
+  &:hover {
+    color: var(--c-text);
+  }
+
   &.active {
     color: var(--c-primary);
   }
