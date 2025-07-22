@@ -212,17 +212,13 @@ const closeAddBankAccountDialog = () => {
 
 const addBankAccount = () => {
   if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
-    const newAccount = bankAccountStore.addBankAccount({
+    bankAccountStore.addBankAccount({
       name: bankAccountForm.name.trim(),
       bankName: bankAccountForm.bankName.trim(),
       accountType: bankAccountForm.accountType,
       balance: bankAccountForm.balance
     });
     closeAddBankAccountDialog();
-
-    // Navigate to the new bank account page
-    const accountSlug = createAccountSlug(newAccount.name);
-    $router.push(`/bank-${accountSlug}`);
   }
 };
 </script>
