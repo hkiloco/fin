@@ -112,26 +112,18 @@ import {
   RiDeleteBinLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
+import { useTransactionStore, type Transaction } from '@store/transactions';
 import { findAccountBySlug } from '@utils/bankAccountRoutes.ts';
 import { uuid } from '@utils/uuid.ts';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
-// Transaction interface
-interface Transaction {
-  id: string;
-  date: string;
-  payee: string;
-  category: string;
-  notes?: string;
-  amount: number;
-}
-
 const { t } = useI18n();
 const route = useRoute();
 const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
+const transactionStore = useTransactionStore();
 
 // Get selected bank account from route parameter
 const accountSlug = computed(() => route.params.accountSlug as string || '');
@@ -140,39 +132,22 @@ const selectedBankAccount = computed(() => {
   return findAccountBySlug(bankAccountStore.accounts.value, accountSlug.value);
 });
 
-// Transactions storage
-const transactions = ref<Transaction[]>([
-  {
-    id: uuid(),
-    date: '2024-01-15',
-    payee: 'Grocery Store',
-    category: 'Groceries',
-    notes: 'Weekly shopping',
-    amount: -125.50
-  },
-  {
-    id: uuid(),
-    date: '2024-01-14',
-    payee: 'Gas Station',
-    category: 'Transportation',
-    notes: '',
-    amount: -45.00
-  },
-  {
-    id: uuid(),
-    date: '2024-01-13',
-    payee: 'Salary Deposit',
-    category: 'Income',
-    notes: 'Monthly salary',
-    amount: 3500.00
-  }
-]);
+// Get transactions for current account
+const transactions = computed(() => {
+  if (!selectedBankAccount.value) return [];
+  return transactionStore.getTransactionsByAccountId(selectedBankAccount.value.id).value;
+});
 
 // Computed values
 const accountBalance = computed(() => {
-  const initialBalance = selectedBankAccount.value?.balance || 0;
-  const transactionTotal = transactions.value.reduce((sum, t) => sum + t.amount, 0);
-  return initialBalance + transactionTotal;
+  if (!selectedBankAccount.value) return 0;
+  return transactionStore.getAccountBalance(selectedBankAccount.value.id, selectedBankAccount.value.balance || 0).value;
+});
+
+// Account summary statistics
+const accountSummary = computed(() => {
+  if (!selectedBankAccount.value) return null;
+  return transactionStore.getAccountSummary(selectedBankAccount.value.id).value;
 });
 
 // Methods for transaction management
@@ -182,34 +157,33 @@ const getAccountTypeLabel = (type?: string) => {
 };
 
 const addNewTransaction = () => {
-  const newTransaction: Transaction = {
-    id: uuid(),
+  if (!selectedBankAccount.value) return;
+
+  transactionStore.addTransaction({
+    bankAccountId: selectedBankAccount.value.id,
     date: new Date().toISOString().split('T')[0],
     payee: '',
     category: '',
     notes: '',
     amount: 0
-  };
-  transactions.value.unshift(newTransaction);
+  });
 };
 
-const updateTransaction = (id: string, field: keyof Transaction, value: string | number) => {
-  const transaction = transactions.value.find(t => t.id === id);
-  if (transaction) {
-    if (field === 'amount') {
-      transaction[field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
-    } else {
-      (transaction as any)[field] = value;
-    }
+const updateTransaction = (id: string, field: string, value: string | number) => {
+  const updates: any = {};
+
+  if (field === 'amount') {
+    updates[field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+  } else {
+    updates[field] = value;
   }
+
+  transactionStore.updateTransaction(id, updates);
 };
 
 const deleteTransaction = (id: string) => {
   if (confirm(t('bankAccount.confirmDeleteTransaction'))) {
-    const index = transactions.value.findIndex(t => t.id === id);
-    if (index !== -1) {
-      transactions.value.splice(index, 1);
-    }
+    transactionStore.deleteTransaction(id);
   }
 };
 </script>
