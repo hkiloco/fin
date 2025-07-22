@@ -107,7 +107,6 @@ import {
   RiDeleteBinLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
-import { findAccountBySlug } from '@utils/bankAccountRoutes.ts';
 import { uuid } from '@utils/uuid.ts';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
