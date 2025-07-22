@@ -105,7 +105,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "add": "Add",
-    "close": "Close"
+    "close": "Close",
+    "goBack": "Go Back"
   },
   "shared": {
     "addGroup": "Add Group",
