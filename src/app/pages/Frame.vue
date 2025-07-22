@@ -142,7 +142,6 @@ import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine,
 import { useStorage } from '@storage/index';
 import { useBankAccountStore } from '@store/bank-accounts';
 import { computed, ref, reactive } from 'vue';
-import { RouterLink } from 'vue-router';
 import { createAccountSlug } from '@utils/bankAccountRoutes.ts';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
