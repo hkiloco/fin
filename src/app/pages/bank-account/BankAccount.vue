@@ -127,11 +127,11 @@ const { t } = useI18n();
 const route = useRoute();
 const bankAccountStore = useBankAccountStore();
 
-// Get selected bank account
-const selectedBankAccountId = computed(() => route.query.accountId as string || '');
+// Get selected bank account from route parameter
+const accountSlug = computed(() => route.params.accountSlug as string || '');
 const selectedBankAccount = computed(() => {
-  if (!selectedBankAccountId.value) return null;
-  return bankAccountStore.getBankAccount(selectedBankAccountId.value);
+  if (!accountSlug.value) return null;
+  return findAccountBySlug(bankAccountStore.accounts.value, accountSlug.value);
 });
 
 // Transactions storage
