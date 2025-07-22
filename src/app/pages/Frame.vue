@@ -22,15 +22,18 @@
       <div v-if="media !== 'mobile'" :class="$style.divider" />
 
       <!-- Bank Account List (Above Add Button) -->
-      <RouterLink
+      <Link
         v-for="account in bankAccountStore.accounts.value"
         :key="account.id"
-        :to="`/bank-${createAccountSlug(account.name)}`"
-        :class="[$style.btn, $style.bankAccountBtn, { [$style.active]: isCurrentBankAccount(account.name) }]"
-        v-tooltip="{ text: account.name, position: 'right' }"
-      >
-        <RiBankLine />
-      </RouterLink>
+        :tooltip="account.name"
+        tooltipPosition="right"
+        testId="bank-account"
+        :class="[$style.btn, $style.bankAccountBtn]"
+        :color="(currentRoute) => 'dimmed'"
+        :icon="RiBankLine"
+        name="bank-account"
+        :query="{ accountId: account.id }"
+      />
 
       <!-- Add Bank Account Button (Below Bank Accounts) -->
       <Button
