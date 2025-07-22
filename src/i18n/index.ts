@@ -27,7 +27,8 @@ export type AvailableLocale = keyof typeof localeUrls;
 const numberFormats: IntlNumberFormat = {
   currency: {
     minimumFractionDigits: 0,
-    style: 'currency'
+    style: 'currency',
+    currency: 'USD' // Default currency
   },
   percent: {
     maximumFractionDigits: 0,
