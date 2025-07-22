@@ -36,11 +36,60 @@ export const useBankAccountStore = () => {
     return bankAccounts.value.find(account => account.id === id);
   };
 
+  // Get account with current balance (including transactions)
+  const getBankAccountWithBalance = (id: string) => {
+    const account = getBankAccount(id);
+    if (!account) return null;
+
+    const currentBalance = transactionStore.getAccountBalance(id, account.balance || 0).value;
+    return {
+      ...account,
+      currentBalance
+    };
+  };
+
+  // Get all accounts with their current balances
+  const getAccountsWithBalances = computed(() => {
+    return bankAccounts.value.map(account => ({
+      ...account,
+      currentBalance: transactionStore.getAccountBalance(account.id, account.balance || 0).value,
+      income: transactionStore.getAccountIncome(account.id).value,
+      expenses: transactionStore.getAccountExpenses(account.id).value,
+      transactionCount: transactionStore.getTransactionsByAccountId(account.id).value.length
+    }));
+  });
+
+  // Get total portfolio balance
+  const getTotalPortfolioBalance = computed(() => {
+    return transactionStore.getTotalBalance(bankAccounts.value).value;
+  });
+
+  // Get portfolio summary
+  const getPortfolioSummary = computed(() => {
+    const accounts = getAccountsWithBalances.value;
+    const totalBalance = getTotalPortfolioBalance.value;
+    const totalIncome = accounts.reduce((sum, acc) => sum + acc.income, 0);
+    const totalExpenses = accounts.reduce((sum, acc) => sum + acc.expenses, 0);
+
+    return {
+      totalBalance,
+      totalIncome,
+      totalExpenses,
+      netChange: totalIncome - totalExpenses,
+      accountCount: accounts.length,
+      accounts: accounts
+    };
+  });
+
   return {
     accounts,
+    getAccountsWithBalances,
+    getTotalPortfolioBalance,
+    getPortfolioSummary,
     addBankAccount,
     removeBankAccount,
     updateBankAccount,
-    getBankAccount
+    getBankAccount,
+    getBankAccountWithBalance
   };
 };
