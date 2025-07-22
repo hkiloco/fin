@@ -195,7 +195,11 @@
     "pageOf": "Page {current} of {total}",
     "filteringBy": "Filtering by",
     "noAccountFound": "Bank Account Not Found",
-    "noAccountFoundMessage": "The requested bank account could not be found. Please check the URL or select a valid account from the navigation."
+    "noAccountFoundMessage": "The requested bank account could not be found. Please check the URL or select a valid account from the navigation.",
+    "totalIncome": "Total Income",
+    "totalExpenses": "Total Expenses",
+    "netChange": "Net Change",
+    "transactionCount": "Transactions"
   },
   "page": {
     "income": {
