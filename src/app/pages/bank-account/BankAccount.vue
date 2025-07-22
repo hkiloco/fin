@@ -378,4 +378,25 @@ const deleteTransaction = (id: string) => {
     }
   }
 }
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  color: var(--theme-text);
+
+  h2 {
+    margin-bottom: 16px;
+    color: var(--c-danger);
+  }
+
+  p {
+    margin-bottom: 24px;
+    color: var(--c-dimmed);
+  }
+}
 </style>
