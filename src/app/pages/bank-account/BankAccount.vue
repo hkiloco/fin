@@ -116,7 +116,7 @@ import { findAccountBySlug } from '@utils/bankAccountRoutes.ts';
 import { uuid } from '@utils/uuid.ts';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 // Transaction interface
 interface Transaction {
