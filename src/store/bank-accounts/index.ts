@@ -1,10 +1,12 @@
 import { BankAccount } from './types';
+import { useTransactionStore } from '@store/transactions';
 import { uuid } from '@utils/uuid.ts';
 import { ref, computed } from 'vue';
 
 const bankAccounts = ref<BankAccount[]>([]);
 
 export const useBankAccountStore = () => {
+  const transactionStore = useTransactionStore();
   const accounts = computed(() => bankAccounts.value);
 
   const addBankAccount = (account: Omit<BankAccount, 'id'>) => {
