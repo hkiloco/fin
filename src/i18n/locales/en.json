@@ -203,6 +203,9 @@
       "title": "Expenses",
       "expensesFor": "Expenses for {year}"
     },
+    "bank-account": {
+      "title": "Bank Account"
+    },
     "dashboard": {
       "title": "Dashboard",
       "tables": "Tables",
