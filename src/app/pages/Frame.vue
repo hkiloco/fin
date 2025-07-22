@@ -345,4 +345,10 @@ const addBankAccount = () => {
   justify-content: flex-end;
   margin-top: 16px;
 }
+
+.bankAccountBtn {
+  &.active {
+    color: var(--c-primary);
+  }
+}
 </style>
