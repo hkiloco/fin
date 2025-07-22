@@ -177,10 +177,10 @@ const buttons = computed((): FrameButton[] => [
 ]);
 
 const accountTypeOptions = computed(() => [
-  { value: 'checking', label: t('bankAccounts.checking') },
-  { value: 'savings', label: t('bankAccounts.savings') },
-  { value: 'credit', label: t('bankAccounts.credit') },
-  { value: 'investment', label: t('bankAccounts.investment') }
+  { id: 'checking', label: t('bankAccounts.checking') },
+  { id: 'savings', label: t('bankAccounts.savings') },
+  { id: 'credit', label: t('bankAccounts.credit') },
+  { id: 'investment', label: t('bankAccounts.investment') }
 ]);
 
 const resetBankAccountForm = () => {
@@ -317,5 +317,19 @@ const addBankAccount = () => {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 8px;
+}
+
+.bankAccountDialog {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
 }
 </style>
