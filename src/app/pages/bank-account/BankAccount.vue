@@ -107,6 +107,7 @@ import {
   RiDeleteBinLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
+import { findAccountBySlug } from '@utils/bankAccountRoutes.ts';
 import { uuid } from '@utils/uuid.ts';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -126,11 +127,11 @@ const { t } = useI18n();
 const route = useRoute();
 const bankAccountStore = useBankAccountStore();
 
-// Get selected bank account
-const selectedBankAccountId = computed(() => route.query.accountId as string || '');
+// Get selected bank account from route parameter
+const accountSlug = computed(() => route.params.accountSlug as string || '');
 const selectedBankAccount = computed(() => {
-  if (!selectedBankAccountId.value) return null;
-  return bankAccountStore.getBankAccount(selectedBankAccountId.value);
+  if (!accountSlug.value) return null;
+  return findAccountBySlug(bankAccountStore.accounts.value, accountSlug.value);
 });
 
 // Transactions storage
