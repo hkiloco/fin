@@ -59,12 +59,7 @@ const status = computed((): Status | undefined => {
     };
   }
 
-  if (appConfig.value?.demo && !user.value) {
-    return {
-      color: 'warning',
-      title: t('navigation.status.demoVersionInfo')
-    };
-  }
+
 
   return undefined;
 });
