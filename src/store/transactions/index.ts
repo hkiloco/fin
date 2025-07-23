@@ -83,9 +83,10 @@ export const useTransactionStore = () => {
   const updateTransaction = (id: string, updates: Partial<Omit<Transaction, 'id' | 'createdAt'>>) => {
     const transaction = transactions.value.find(t => t.id === id);
     if (transaction) {
+      const newAmount = updates.amount ?? transaction.amount;
       Object.assign(transaction, {
         ...updates,
-        type: (updates.amount ?? transaction.amount) > 0 ? 'income' : 'expense',
+        type: newAmount > 0 ? 'income' : 'expense',
         updatedAt: new Date().toISOString()
       });
     }
