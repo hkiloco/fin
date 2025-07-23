@@ -3,7 +3,17 @@ import { useTransactionStore } from '@store/transactions';
 import { uuid } from '@utils/uuid.ts';
 import { ref, computed } from 'vue';
 
-const bankAccounts = ref<BankAccount[]>([]);
+// Initialize with default Cash account
+const bankAccounts = ref<BankAccount[]>([
+  {
+    id: 'default-cash-account',
+    name: 'Cash',
+    bankName: 'Cash',
+    accountType: 'checking',
+    balance: 0,
+    color: '#22C55E' // Green color for cash
+  }
+]);
 
 export const useBankAccountStore = () => {
   const transactionStore = useTransactionStore();
