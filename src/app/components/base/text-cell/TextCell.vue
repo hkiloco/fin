@@ -5,16 +5,16 @@
       :value="modelValue"
       :class="$style.input"
       type="text"
-      @blur="focused = false"
-      @focus="focus"
-      @input="change"
+      @blur="handleBlur"
+      @focus="handleFocus"
+      @input="handleInput"
       @keydown.enter="input?.blur"
     />
   </span>
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, useCssModule } from 'vue';
+import { computed, ref, useCssModule } from 'vue';
 
 const modelValue = defineModel<string>();
 
@@ -39,18 +39,17 @@ const classes = computed(() => [
   }
 ]);
 
-const focus = () => {
+const handleFocus = () => {
   focused.value = true;
-  // Don't auto-select text to allow normal typing
-  nextTick(() => {
-    if (input.value && !modelValue.value) {
-      input.value.focus();
-    }
-  });
 };
 
-const change = (e: Event) => {
-  modelValue.value = (e.target as HTMLInputElement).value;
+const handleBlur = () => {
+  focused.value = false;
+};
+
+const handleInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  modelValue.value = target.value;
 };
 </script>
 
