@@ -100,17 +100,34 @@ const { state: dataState } = useDataStore();
 // Sorting state
 const sortField = ref<'date' | 'payee' | 'group' | 'category' | 'amount'>('date');
 const sortDirection = ref<'asc' | 'desc'>('desc'); // Default to newest first
+const isManualSort = ref(false); // Track if user has manually sorted
 
 // Sort and group transactions
 const sortedTransactions = computed(() => {
-  const sorted = [...props.transactions].sort((a, b) => {
+  const sorted = [...props.transactions];
+
+  // Always sort by date first (default behavior)
+  if (sortField.value === 'date' || !isManualSort.value) {
+    return sorted.sort((a, b) => {
+      const aDate = new Date(a.date);
+      const bDate = new Date(b.date);
+
+      if (sortField.value === 'date') {
+        return sortDirection.value === 'asc' ?
+          aDate.getTime() - bDate.getTime() :
+          bDate.getTime() - aDate.getTime();
+      } else {
+        // Default: newest first
+        return bDate.getTime() - aDate.getTime();
+      }
+    });
+  }
+
+  // Manual sorting for other fields
+  return sorted.sort((a, b) => {
     let aValue: any, bValue: any;
 
     switch (sortField.value) {
-      case 'date':
-        aValue = new Date(a.date);
-        bValue = new Date(b.date);
-        break;
       case 'payee':
         aValue = a.payee || '';
         bValue = b.payee || '';
@@ -135,8 +152,6 @@ const sortedTransactions = computed(() => {
     if (aValue > bValue) return sortDirection.value === 'asc' ? 1 : -1;
     return 0;
   });
-
-  return sorted;
 });
 
 // Group transactions by payee (after sorting)
