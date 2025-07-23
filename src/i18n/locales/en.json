@@ -175,7 +175,11 @@
     "editTransaction": "Edit Transaction",
     "confirmDeleteTransaction": "Are you sure you want to delete this transaction?",
     "confirmDeleteAllTransactions": "Are you sure you want to delete all visible transactions?",
-    "pageOf": "Page {current} of {total}"
+    "pageOf": "Page {current} of {total}",
+    "totalIncome": "Total Income",
+    "totalExpenses": "Total Expenses",
+    "netChange": "Net Change",
+    "transactionCount": "Transactions"
   },
   "expenseDetails": {
     "expenseTracker": "Expense Tracker",
