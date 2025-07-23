@@ -155,6 +155,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   updateTransaction: [id: string, field: string, value: string | number];
   deleteTransaction: [id: string];
+  reorderTransaction: [data: { sourceId: string; targetId: string; type: string }];
 }>();
 
 const { t } = useI18n();
