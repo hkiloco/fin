@@ -13,13 +13,6 @@
 
     <!-- Transaction Groups -->
     <template v-for="(payeeGroup, index) in groupedTransactions" :key="payeeGroup.payee">
-      <Draggable
-        :id="payeeGroup.payee"
-        :icon="buildDraggableIcon"
-        :text="buildDraggableText"
-        name="transaction-groups"
-        @drop="reorder"
-      />
       <TransactionGroup
         :allowDelete="true"
         :group="payeeGroup"
