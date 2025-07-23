@@ -171,9 +171,7 @@ const addNewTransaction = () => {
   }
 }
 
-.dateFilter {
-  margin-left: 5px;
-}
+
 
 .addTransactionBtn {
   margin-top: 20px;
