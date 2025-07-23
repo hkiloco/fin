@@ -60,11 +60,49 @@ const { state: dataState } = useDataStore();
 const sortField = ref<'date' | 'payee' | 'group' | 'category' | 'amount'>('date');
 const sortDirection = ref<'asc' | 'desc'>('desc'); // Default to newest first
 
-// Group transactions by payee
+// Sort and group transactions
+const sortedTransactions = computed(() => {
+  const sorted = [...props.transactions].sort((a, b) => {
+    let aValue: any, bValue: any;
+
+    switch (sortField.value) {
+      case 'date':
+        aValue = new Date(a.date);
+        bValue = new Date(b.date);
+        break;
+      case 'payee':
+        aValue = a.payee || '';
+        bValue = b.payee || '';
+        break;
+      case 'group':
+        aValue = a.group || '';
+        bValue = b.group || '';
+        break;
+      case 'category':
+        aValue = a.category || '';
+        bValue = b.category || '';
+        break;
+      case 'amount':
+        aValue = a.amount;
+        bValue = b.amount;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection.value === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection.value === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  return sorted;
+});
+
+// Group transactions by payee (after sorting)
 const groupedTransactions = computed(() => {
   const groups = new Map<string, Transaction[]>();
 
-  props.transactions.forEach(transaction => {
+  sortedTransactions.value.forEach(transaction => {
     const payee = transaction.payee || 'Unknown';
     if (!groups.has(payee)) {
       groups.set(payee, []);
