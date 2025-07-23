@@ -27,10 +27,9 @@
     <span />
     <Button
       :class="$style.addTransactionBtn"
-      color="primary"
-      size="s"
       :icon="RiAddCircleLine"
       :text="t('bankAccount.addTransaction')"
+      textual
       @click="addNewTransaction"
     />
   </div>
