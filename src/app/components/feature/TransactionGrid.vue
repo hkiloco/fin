@@ -177,7 +177,7 @@ const addNewTransaction = () => {
 
 .addTransactionBtn {
   margin-top: 20px;
-  grid-area: auto / 2 / auto / 4;
+  grid-column: 2 / span 3;
   background: var(--c-primary);
 }
 </style>
