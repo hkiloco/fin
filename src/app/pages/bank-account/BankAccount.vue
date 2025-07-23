@@ -320,7 +320,7 @@ const deleteTransaction = (id: string) => {
 
 .tableHeader {
   display: grid;
-  grid-template-columns: 120px 1fr 250px 150px 120px 60px;
+  grid-template-columns: 120px 1fr 300px 0px 120px 60px;
   gap: 12px;
   padding: 12px 20px;
   background: var(--app-background-secondary);
