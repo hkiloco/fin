@@ -94,7 +94,7 @@
               @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
             />
           </span>
-          <span :class="$style.colGroup">
+          <span :class="$style.colGroupCategory">
             <BudgetSelector
               :group="transaction.group"
               :category="transaction.category"
@@ -102,9 +102,6 @@
               @update:group="updateTransaction(transaction.id, 'group', $event)"
               @update:category="updateTransaction(transaction.id, 'category', $event)"
             />
-          </span>
-          <span :class="$style.colCategory">
-            <!-- Category is handled by BudgetSelector -->
           </span>
           <span :class="$style.colAmount">
             <CurrencyCell
@@ -344,8 +341,8 @@ const deleteTransaction = (id: string) => {
 
 .tableHeader {
   display: grid;
-  grid-template-columns: 120px 1fr 300px 0px 120px 60px;
-  gap: 12px;
+  grid-template-columns: 110px 2fr 150px 150px 120px 50px;
+  gap: 8px;
   padding: 12px 20px;
   background: var(--app-background-secondary);
   border-bottom: 2px solid var(--app-border);
@@ -361,8 +358,8 @@ const deleteTransaction = (id: string) => {
 
 .tableRow {
   display: grid;
-  grid-template-columns: 120px 1fr 300px 0px 120px 60px;
-  gap: 12px;
+  grid-template-columns: 110px 2fr 300px 120px 50px;
+  gap: 8px;
   padding: 8px 20px;
   border-bottom: 1px solid var(--app-border);
   font-size: var(--font-size-s);
@@ -395,7 +392,12 @@ const deleteTransaction = (id: string) => {
 }
 
 .colCategory {
-  display: none; // Hidden since BudgetSelector handles both group and category
+  font-size: var(--font-size-xs);
+}
+
+.colGroupCategory {
+  font-size: var(--font-size-xs);
+  grid-column: span 2;
 }
 
 .colAmount {
