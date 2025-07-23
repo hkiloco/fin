@@ -45,10 +45,10 @@
         name="transaction-groups"
         @drop="reorder"
       />
-      <TransactionGroup 
-        :allowDelete="allowDelete" 
-        :group="payeeGroup" 
-        :testId="`payee-${index}`" 
+      <TransactionGroup
+        :allowDelete="true"
+        :group="payeeGroup"
+        :testId="`payee-${index}`"
         @updateTransaction="updateTransaction"
         @deleteTransaction="deleteTransaction"
       />
@@ -82,6 +82,7 @@ import type { Component } from 'vue';
 
 const props = defineProps<{
   transactions: Transaction[];
+  accountId?: string;
 }>();
 
 const { t } = useI18n();
@@ -191,7 +192,7 @@ const deleteAllTransactions = () => {
 
 const addNewTransaction = () => {
   transactionStore.addTransaction({
-    bankAccountId: '',
+    bankAccountId: props.accountId || '',
     date: new Date().toISOString().split('T')[0],
     payee: '',
     group: '',
