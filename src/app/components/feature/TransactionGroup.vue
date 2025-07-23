@@ -100,12 +100,7 @@
     <span :class="$style.meta">{{ formatDate(transaction.date) }}</span>
   </template>
 
-  <!-- Footer -->
-  <span />
-  <Button :icon="RiAddCircleLine" textual @click="addTransaction" />
-  <span style="grid-column: 3 / 8" />
-  <Currency :class="[$style.meta, $style.bold]" :value="group.total" />
-  <span :class="[$style.meta, $style.bold]">{{ group.transactions.length }} items</span>
+
 </template>
 
 <script lang="ts" setup>
