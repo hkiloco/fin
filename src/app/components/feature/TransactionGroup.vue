@@ -9,7 +9,7 @@
   />
 
   <span :class="[$style.top, $style.start]">
-    <span>{{ formatDate(group.transactions[0]?.date || '') }}</span>
+    <span>{{ t('bankAccount.date') }}</span>
   </span>
 
   <TextCell
@@ -287,13 +287,13 @@ const getCategoryOptions = (groupName: string) => {
 }
 
 .top {
+  background: var(--c-primary);
+  color: var(--c-text-light);
   display: inline-block;
   font-size: var(--input-field-font-size);
-  font-weight: var(--font-weight-l);
+  font-weight: var(--font-weight-m);
   margin: 4px 0;
   padding: 5px 0;
-  background: var(--grid-header-background);
-  color: var(--grid-header-text);
 
   > span {
     display: inline-block;
@@ -301,16 +301,14 @@ const getCategoryOptions = (groupName: string) => {
   }
 
   &.start {
-    border-top-left-radius: var(--border-radius-l);
-    border-bottom-left-radius: var(--border-radius-l);
-    padding-left: 8px;
+    border-radius: 6px 0 0 6px;
+    padding: 5px 4px 5px 8px;
     cursor: text;
   }
 
   &.end {
-    border-top-right-radius: var(--border-radius-l);
-    border-bottom-right-radius: var(--border-radius-l);
-    padding-right: 8px;
+    border-radius: 0 6px 6px 0;
+    padding: 5px 8px 5px 0;
   }
 }
 
