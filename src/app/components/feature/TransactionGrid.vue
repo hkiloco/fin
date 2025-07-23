@@ -157,5 +157,7 @@ const addNewTransaction = () => {
 .addTransactionBtn {
   margin-top: 20px;
   grid-column: 2 / span 3;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-m);
 }
 </style>
