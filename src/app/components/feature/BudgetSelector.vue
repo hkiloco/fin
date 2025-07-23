@@ -95,19 +95,26 @@ const groupOptions = computed(() => {
 
 // Build category options based on selected group
 const categoryOptions = computed(() => {
-  if (!selectedGroup.value) return [];
-  
-  const budgetGroups = currentYearData.value 
-    ? currentYearData.value[props.type === 'expense' ? 'expenses' : 'income']
-    : [];
-  
+  if (!selectedGroup.value || !currentYearData.value) return [];
+
+  // Search in both income and expenses for the selected group
+  const incomeGroups = currentYearData.value.income || [];
+  const expenseGroups = currentYearData.value.expenses || [];
+  const allBudgetGroups = [...incomeGroups, ...expenseGroups];
+
   // Find matching budget group
-  const budgetGroup = budgetGroups.find(g => g.name === selectedGroup.value);
+  const budgetGroup = allBudgetGroups.find(g => g.name === selectedGroup.value);
   const budgetCategories = budgetGroup ? budgetGroup.budgets.map(b => b.name) : [];
-  
+
+  console.log('Category Debug:', {
+    selectedGroup: selectedGroup.value,
+    budgetGroup,
+    budgetCategories
+  });
+
   // Get existing transaction categories for this group
   const existingCategories = transactionStore.getAvailableCategoriesForGroup(selectedGroup.value).value;
-  
+
   const allCategories = new Set([
     ...budgetCategories,
     ...existingCategories
