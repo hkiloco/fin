@@ -6,7 +6,7 @@
     <template #header>
       <MiniChart :class="$style.miniChart" :values="monthlyTotals" />
     </template>
-    <TransactionGrid :transactions="transactions" />
+    <TransactionGrid :transactions="transactions" :accountId="accountId" />
   </Pane>
 </template>
 
