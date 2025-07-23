@@ -51,7 +51,7 @@
       ]"
     >
       <TextCell
-        :modelValue="transaction.payee"
+        v-model="transaction.payee"
         @update:model-value="$emit('updateTransaction', transaction.id, 'payee', $event)"
       />
     </span>
