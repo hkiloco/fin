@@ -71,13 +71,6 @@ const groupOptions = computed(() => {
   const incomeGroups = currentYearData.value.income || [];
   const expenseGroups = currentYearData.value.expenses || [];
 
-  console.log('BudgetSelector Debug:', {
-    type: props.type,
-    currentYear,
-    incomeGroups: incomeGroups.map(g => g.name),
-    expenseGroups: expenseGroups.map(g => g.name)
-  });
-
   const existingGroups = transactionStore.getAvailableGroups.value;
 
   // Show all groups (both income and expense) to give users flexibility
