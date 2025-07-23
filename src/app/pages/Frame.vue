@@ -29,11 +29,13 @@
         :class="[
           $style.btn,
           $style.bankAccountBtn,
-          { [$style.active]: isCurrentBankAccount(account.name) }
+          { [$style.active]: isCurrentBankAccount(account.name) },
+          { [$style.cashAccount]: account.name.toLowerCase() === 'cash' }
         ]"
         v-tooltip="{ text: account.name, position: 'right' }"
       >
-        <RiBankLine />
+        <RiMoneyDollarCircleLine v-if="account.name.toLowerCase() === 'cash'" />
+        <RiBankLine v-else />
       </RouterLink>
 
       <!-- Add Bank Account Button (Below Bank Accounts) -->
