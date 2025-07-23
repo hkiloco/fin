@@ -246,6 +246,9 @@ onUnmounted(() => {
   padding: 5px 0;
   position: sticky;
   top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   &.dateColumn {
     border-radius: 6px 0 0 6px;
@@ -257,6 +260,21 @@ onUnmounted(() => {
     border-top-right-radius: 6px;
     padding: 5px 8px 5px 0;
   }
+
+  &.sortable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: var(--c-primary-dark, #4c7bd9);
+    }
+  }
+}
+
+.sortIcon {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
 }
 
 
