@@ -28,7 +28,7 @@ const transactions = computed(() => {
   if (props.accountId) {
     return transactionStore.getTransactionsByAccountId(props.accountId).value;
   }
-  return transactionStore.getAllTransactions().value;
+  return transactionStore.allTransactions.value;
 });
 
 const totalAmount = computed(() => {
