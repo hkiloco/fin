@@ -229,6 +229,9 @@ const sortBy = (field: 'date' | 'payee' | 'group' | 'category' | 'amount') => {
     sortField.value = field;
     sortDirection.value = field === 'date' ? 'desc' : 'asc'; // Default newest first for date
   }
+
+  // Mark as manual sort when user clicks on any column
+  isManualSort.value = true;
 };
 
 const addNewTransaction = () => {
