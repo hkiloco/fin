@@ -1,36 +1,4 @@
 <template>
-  <!-- Header -->
-  <Button
-    color="dimmed"
-    :disabled="!allowDelete"
-    :icon="RiCloseCircleLine"
-    textual
-    @click="deletePayeeGroup"
-  />
-
-  <span :class="[$style.top, $style.start]">
-    <span>{{ t('bankAccount.date') }}</span>
-  </span>
-
-  <TextCell
-    :class="$style.top"
-    :modelValue="group.payee"
-    inline
-    @update:model-value="updatePayeeName($event)"
-  />
-
-  <span :class="$style.top">
-    <Currency :value="group.total" :testId="`${testId}-total`" />
-  </span>
-
-  <span :class="$style.top">
-    <Currency :value="group.total" :testId="`${testId}-total`" />
-  </span>
-
-  <span :class="[$style.top, $style.end]">
-    <span>{{ t('shared.total') }}</span>
-  </span>
-
   <!-- Individual Transactions -->
   <template v-for="(transaction, index) of group.transactions" :key="transaction.id + index">
     <Draggable
