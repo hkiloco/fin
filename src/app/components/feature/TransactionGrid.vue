@@ -167,6 +167,18 @@ const deleteTransaction = (id: string) => {
   }
 };
 
+const setFilterDate = (date: string) => {
+  filterDate.value = date;
+};
+
+const deleteAllTransactions = () => {
+  if (confirm(t('bankAccount.confirmDeleteAllTransactions'))) {
+    props.transactions.forEach(transaction => {
+      transactionStore.deleteTransaction(transaction.id);
+    });
+  }
+};
+
 const addNewTransaction = () => {
   transactionStore.addTransaction({
     bankAccountId: '',
