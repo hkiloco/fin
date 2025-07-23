@@ -141,6 +141,15 @@ const deleteTransaction = (id: string) => {
 
 
 
+const sortBy = (field: 'date' | 'payee' | 'group' | 'category' | 'amount') => {
+  if (sortField.value === field) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField.value = field;
+    sortDirection.value = field === 'date' ? 'desc' : 'asc'; // Default newest first for date
+  }
+};
+
 const addNewTransaction = () => {
   transactionStore.addTransaction({
     bankAccountId: props.accountId || '',
