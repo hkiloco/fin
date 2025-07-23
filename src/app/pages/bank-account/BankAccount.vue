@@ -84,17 +84,17 @@
               @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
             />
           </span>
-          <span :class="$style.colCategory">
-            <TextCell
-              :modelValue="transaction.category"
-              @update:model-value="updateTransaction(transaction.id, 'category', $event)"
+          <span :class="$style.colGroup">
+            <BudgetSelector
+              :group="transaction.group"
+              :category="transaction.category"
+              :type="transaction.type"
+              @update:group="updateTransaction(transaction.id, 'group', $event)"
+              @update:category="updateTransaction(transaction.id, 'category', $event)"
             />
           </span>
-          <span :class="$style.colNotes">
-            <TextCell
-              :modelValue="transaction.notes || ''"
-              @update:model-value="updateTransaction(transaction.id, 'notes', $event)"
-            />
+          <span :class="$style.colCategory">
+            <!-- Category is handled by BudgetSelector -->
           </span>
           <span :class="$style.colAmount">
             <CurrencyCell
