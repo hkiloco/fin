@@ -126,7 +126,7 @@ const getAccountTypeLabel = (type?: string) => {
 .header {
   background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
   color: white;
-  padding: 20px;
+  padding: 20px 20px 0;
   border-bottom: 2px solid var(--app-border);
 }
 
