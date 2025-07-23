@@ -82,28 +82,67 @@
           :key="transaction.id"
           :class="[$style.tableRow, { [$style.even]: index % 2 === 1 }]"
         >
-          <span :class="$style.colDate">
+          <span :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: index % 2,
+              [$style.firstRow]: index === 0,
+              [$style.firstColumn]: true
+            }
+          ]">
             <DatePicker
               :modelValue="transaction.date"
               @update:model-value="updateTransaction(transaction.id, 'date', $event)"
             />
           </span>
-          <span :class="$style.colPayee">
+          <span :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: index % 2,
+              [$style.firstRow]: index === 0
+            }
+          ]">
             <TextCell
               :modelValue="transaction.payee"
               @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
             />
           </span>
-          <span :class="$style.colGroupCategory">
-            <BudgetSelector
-              :group="transaction.group"
-              :category="transaction.category"
-              :type="transaction.type"
-              @update:group="updateTransaction(transaction.id, 'group', $event)"
-              @update:category="updateTransaction(transaction.id, 'category', $event)"
+          <span :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: index % 2,
+              [$style.firstRow]: index === 0
+            }
+          ]">
+            <InlineSelect
+              v-model="transaction.group"
+              :options="getGroupOptions()"
+              placeholder="Select group..."
+              @update:model-value="updateTransaction(transaction.id, 'group', $event)"
             />
           </span>
-          <span :class="$style.colAmount">
+          <span :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: index % 2,
+              [$style.firstRow]: index === 0
+            }
+          ]">
+            <InlineSelect
+              v-model="transaction.category"
+              :options="getCategoryOptions(transaction.group)"
+              :disabled="!transaction.group"
+              placeholder="Select category..."
+              @update:model-value="updateTransaction(transaction.id, 'category', $event)"
+            />
+          </span>
+          <span :class="[
+            $style.currencyCell,
+            {
+              [$style.even]: index % 2,
+              [$style.firstRow]: index === 0
+            }
+          ]">
             <CurrencyCell
               :modelValue="transaction.amount"
               @update:model-value="updateTransaction(transaction.id, 'amount', $event)"
@@ -140,8 +179,8 @@ import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
 import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
 import DatePicker from '@components/base/date-picker/DatePicker.vue';
+import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
 import TextCell from '@components/base/text-cell/TextCell.vue';
-import BudgetSelector from '@components/feature/BudgetSelector.vue';
 import {
   RiAddLine,
   RiDeleteBinLine,
@@ -149,6 +188,7 @@ import {
   RiBankLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
+import { useDataStore } from '@store/state';
 import { useTransactionStore, type Transaction } from '@store/transactions';
 import { findAccountBySlug } from '@utils/bankAccountRoutes.ts';
 import { uuid } from '@utils/uuid.ts';
@@ -161,6 +201,7 @@ const route = useRoute();
 const $router = useRouter();
 const bankAccountStore = useBankAccountStore();
 const transactionStore = useTransactionStore();
+const { state: dataState } = useDataStore();
 
 // Get selected bank account from route parameter
 const accountSlug = computed(() => route.params.accountSlug as string || '');
@@ -222,6 +263,57 @@ const deleteTransaction = (id: string) => {
   if (confirm(t('bankAccount.confirmDeleteTransaction'))) {
     transactionStore.deleteTransaction(id);
   }
+};
+
+// Helper functions for group and category options
+const getGroupOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const currentYearData = dataState.years.find(y => y.year === currentYear);
+
+  if (!currentYearData) return [];
+
+  const incomeGroups = currentYearData.income || [];
+  const expenseGroups = currentYearData.expenses || [];
+  const existingGroups = transactionStore.getAvailableGroups.value;
+
+  const allGroups = new Set([
+    ...incomeGroups.map(g => g.name),
+    ...expenseGroups.map(g => g.name),
+    ...existingGroups
+  ]);
+
+  return Array.from(allGroups).sort().map(name => ({
+    id: name,
+    label: name
+  }));
+};
+
+const getCategoryOptions = (groupName: string) => {
+  if (!groupName) return [];
+
+  const currentYear = new Date().getFullYear();
+  const currentYearData = dataState.years.find(y => y.year === currentYear);
+
+  if (!currentYearData) return [];
+
+  const incomeGroups = currentYearData.income || [];
+  const expenseGroups = currentYearData.expenses || [];
+  const allBudgetGroups = [...incomeGroups, ...expenseGroups];
+
+  const budgetGroup = allBudgetGroups.find(g => g.name === groupName);
+  const budgetCategories = budgetGroup ? budgetGroup.budgets.map(b => b.name) : [];
+
+  const existingCategories = transactionStore.getAvailableCategoriesForGroup(groupName).value;
+
+  const allCategories = new Set([
+    ...budgetCategories,
+    ...existingCategories
+  ]);
+
+  return Array.from(allCategories).sort().map(name => ({
+    id: name,
+    label: name
+  }));
 };
 </script>
 
@@ -342,71 +434,75 @@ const deleteTransaction = (id: string) => {
 .tableHeader {
   display: grid;
   grid-template-columns: 110px 2fr 150px 150px 120px 50px;
-  gap: 8px;
-  padding: 12px 20px;
-  background: var(--app-background-secondary);
-  border-bottom: 2px solid var(--app-border);
-  font-weight: var(--font-weight-m);
+  gap: 0;
+  background: var(--grid-header-background);
+  color: var(--grid-header-text);
+  font-weight: var(--font-weight-l);
   font-size: var(--font-size-xs);
-  color: var(--c-text-dimmed);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: sticky;
   top: 0;
   z-index: 1;
-}
 
-.tableRow {
-  display: grid;
-  grid-template-columns: 110px 2fr 300px 120px 50px;
-  gap: 8px;
-  padding: 8px 20px;
-  border-bottom: 1px solid var(--app-border);
-  font-size: var(--font-size-s);
-  transition: background-color 0.2s;
-  align-items: center;
+  > span {
+    display: flex;
+    align-items: center;
+    padding: 12px 8px;
+    border-right: 1px solid var(--grid-border-color);
+    border-bottom: 2px solid var(--grid-border-color);
+    border-top: 1px solid var(--grid-border-color);
 
-  &:hover {
-    background: var(--app-background-secondary);
-  }
-
-  &.even {
-    background: rgba(0, 0, 0, 0.02);
-
-    &:hover {
-      background: var(--app-background-secondary);
+    &:first-child {
+      border-left: 1px solid var(--grid-border-color);
     }
   }
 }
 
-.colDate {
+.tableRow {
+  display: grid;
+  grid-template-columns: 110px 2fr 150px 150px 120px 50px;
+  gap: 0;
+  align-items: center;
+}
+
+.currencyCell {
+  display: flex;
+  align-items: center;
+  background: var(--grid-background-odd);
+  height: 48px;
+  border-right: 1px solid var(--grid-border-color);
+  border-bottom: 1px solid var(--grid-border-color);
+  transition: background-color var(--input-field-transition);
+  box-shadow: inset 0 0 0 1px transparent;
+  padding: 0 8px;
   font-size: var(--font-size-xs);
-}
 
-.colPayee {
-  font-weight: var(--font-weight-m);
-}
+  &.firstRow {
+    border-top: 1px solid var(--grid-border-color);
+  }
 
-.colGroup {
-  font-size: var(--font-size-xs);
-}
+  &.firstColumn {
+    border-left: 1px solid var(--grid-border-color);
+  }
 
-.colCategory {
-  font-size: var(--font-size-xs);
-}
+  &:focus-within {
+    box-shadow: 0 0 0 2px var(--c-primary) inset;
+    border-radius: 1px;
+  }
 
-.colGroupCategory {
-  font-size: var(--font-size-xs);
-  grid-column: span 2;
-}
-
-.colAmount {
-  text-align: right;
+  &.even {
+    background: var(--grid-background-even);
+  }
 }
 
 .colActions {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 48px;
+  background: var(--app-background-secondary);
+  border-bottom: 1px solid var(--app-border);
 }
 
 .emptyState {
