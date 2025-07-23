@@ -4,11 +4,51 @@
     <span />
     <span />
     <span />
-    <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
-    <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
-    <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
-    <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
-    <span :class="[$style.columnHeader, $style.lastColumn]">{{ t('bankAccount.amount') }}</span>
+    <span
+      :class="[$style.columnHeader, $style.dateColumn, $style.sortable]"
+      @click="sortBy('date')"
+    >
+      {{ t('bankAccount.date') }}
+      <span v-if="sortField === 'date'" :class="$style.sortIcon">
+        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+      </span>
+    </span>
+    <span
+      :class="[$style.columnHeader, $style.sortable]"
+      @click="sortBy('payee')"
+    >
+      {{ t('bankAccount.payee') }}
+      <span v-if="sortField === 'payee'" :class="$style.sortIcon">
+        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+      </span>
+    </span>
+    <span
+      :class="[$style.columnHeader, $style.sortable]"
+      @click="sortBy('group')"
+    >
+      {{ t('bankAccount.group') }}
+      <span v-if="sortField === 'group'" :class="$style.sortIcon">
+        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+      </span>
+    </span>
+    <span
+      :class="[$style.columnHeader, $style.sortable]"
+      @click="sortBy('category')"
+    >
+      {{ t('bankAccount.category') }}
+      <span v-if="sortField === 'category'" :class="$style.sortIcon">
+        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+      </span>
+    </span>
+    <span
+      :class="[$style.columnHeader, $style.lastColumn, $style.sortable]"
+      @click="sortBy('amount')"
+    >
+      {{ t('bankAccount.amount') }}
+      <span v-if="sortField === 'amount'" :class="$style.sortIcon">
+        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+      </span>
+    </span>
     <span />
     <span />
 
