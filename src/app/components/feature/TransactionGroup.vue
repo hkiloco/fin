@@ -166,6 +166,15 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString();
 };
 
+const buildDraggableText = (store: DraggableStore) => {
+  return `Move transaction`;
+};
+
+const reorder = (evt: ReorderEvent) => {
+  // Handle transaction reordering
+  console.log('Reorder transaction:', evt);
+};
+
 
 
 
