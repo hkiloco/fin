@@ -8,12 +8,20 @@
     @click="deletePayeeGroup"
   />
 
+  <span :class="[$style.top, $style.start]">
+    <span>{{ formatDate(group.transactions[0]?.date || '') }}</span>
+  </span>
+
   <TextCell
-    :class="[$style.top, $style.start]"
+    :class="$style.top"
     :modelValue="group.payee"
     inline
     @update:model-value="updatePayeeName($event)"
   />
+
+  <span :class="$style.top">
+    <Currency :value="group.total" :testId="`${testId}-total`" />
+  </span>
 
   <span :class="$style.top">
     <Currency :value="group.total" :testId="`${testId}-total`" />
