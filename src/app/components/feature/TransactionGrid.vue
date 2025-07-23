@@ -76,6 +76,7 @@ import { DraggableStore } from '@components/base/draggable/store';
 import { RiAddCircleLine, RiDeleteBinLine, RiSkipDownLine } from '@remixicon/vue';
 import DatePicker from '@components/base/date-picker/DatePicker.vue';
 import { useTransactionStore, type Transaction } from '@store/transactions';
+import { useDataStore } from '@store/state';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Component } from 'vue';
