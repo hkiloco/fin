@@ -41,10 +41,27 @@
       @click="$emit('deleteTransaction', transaction.id)"
     />
 
+    <span
+      :class="[
+        $style.gridCell,
+        {
+          [$style.even]: index % 2,
+          [$style.firstRow]: index === 0,
+          [$style.tlc]: index === 0,
+          [$style.blc]: index === group.transactions.length - 1
+        }
+      ]"
+    >
+      <DatePicker
+        :modelValue="transaction.date"
+        @update:model-value="$emit('updateTransaction', transaction.id, 'date', $event)"
+      />
+    </span>
+
     <span :class="$style.header">
-      <TextCell 
-        :modelValue="transaction.payee" 
-        @update:model-value="$emit('updateTransaction', transaction.id, 'payee', $event)" 
+      <TextCell
+        :modelValue="transaction.payee"
+        @update:model-value="$emit('updateTransaction', transaction.id, 'payee', $event)"
       />
     </span>
 
@@ -110,7 +127,7 @@
   <!-- Footer -->
   <span />
   <Button :icon="RiAddCircleLine" textual @click="addTransaction" />
-  <span style="grid-column: 3 / 7" />
+  <span style="grid-column: 3 / 8" />
   <Currency :class="[$style.meta, $style.bold]" :value="group.total" />
   <span :class="[$style.meta, $style.bold]">{{ group.transactions.length }} items</span>
 </template>
@@ -124,6 +141,7 @@ import Draggable from '@components/base/draggable/Draggable.vue';
 import { DraggableStore } from '@components/base/draggable/store';
 import TextCell from '@components/base/text-cell/TextCell.vue';
 import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
+import DatePicker from '@components/base/date-picker/DatePicker.vue';
 import { RiAddCircleLine, RiCloseCircleLine } from '@remixicon/vue';
 import { useDataStore } from '@store/state';
 import { useTransactionStore, type Transaction } from '@store/transactions';
