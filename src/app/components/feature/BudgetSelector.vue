@@ -62,12 +62,20 @@ const currentYearData = computed(() => {
 
 // Build group options from budget data + existing transaction groups
 const groupOptions = computed(() => {
-  const budgetGroups = currentYearData.value 
+  const budgetGroups = currentYearData.value
     ? currentYearData.value[props.type === 'expense' ? 'expenses' : 'income']
     : [];
-  
+
+  console.log('BudgetSelector Debug:', {
+    type: props.type,
+    currentYear,
+    currentYearData: currentYearData.value,
+    budgetGroups: budgetGroups,
+    budgetGroupNames: budgetGroups.map(g => g.name)
+  });
+
   const existingGroups = transactionStore.getAvailableGroups.value;
-  
+
   const allGroups = new Set([
     ...budgetGroups.map(g => g.name),
     ...existingGroups
