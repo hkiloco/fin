@@ -63,7 +63,6 @@ const currentYearData = computed(() => {
 // Build group options from budget data + existing transaction groups
 const groupOptions = computed(() => {
   if (!currentYearData.value) {
-    console.log('No current year data found');
     return [];
   }
 
