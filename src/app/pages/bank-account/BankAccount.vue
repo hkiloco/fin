@@ -7,7 +7,17 @@
   <div v-else :class="$style.bankAccount">
     <!-- Header -->
     <div :class="$style.header">
-      <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
+      <div :class="$style.headerTitle">
+        <RiMoneyDollarCircleLine
+          v-if="selectedBankAccount?.name?.toLowerCase() === 'cash'"
+          :class="$style.headerIcon"
+        />
+        <RiBankLine
+          v-else
+          :class="$style.headerIcon"
+        />
+        <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
+      </div>
       <div :class="$style.accountInfo">
         <span :class="$style.accountName">{{ selectedBankAccount?.name }}</span>
         <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
