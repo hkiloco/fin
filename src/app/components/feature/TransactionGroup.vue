@@ -22,7 +22,7 @@
     <!-- Column 3: Empty span -->
     <span />
 
-    <!-- Column 3: Date -->
+    <!-- Column 4: Date -->
     <span
       :class="[
         $style.gridCell,
@@ -40,7 +40,7 @@
       />
     </span>
 
-    <!-- Column 4: Payee -->
+    <!-- Column 5: Payee -->
     <span
       :class="[
         $style.gridCell,
@@ -56,7 +56,7 @@
       />
     </span>
 
-    <!-- Column 5: Group -->
+    <!-- Column 6: Group -->
     <span
       :class="[
         $style.gridCell,
@@ -76,7 +76,7 @@
       />
     </span>
 
-    <!-- Column 6: Category -->
+    <!-- Column 7: Category -->
     <span
       :class="[
         $style.gridCell,
@@ -95,7 +95,7 @@
       />
     </span>
 
-    <!-- Column 7: Amount -->
+    <!-- Column 8: Amount -->
     <span
       :class="[
         $style.gridCell,
@@ -115,10 +115,10 @@
       <Currency :testId="`${testId}-transaction-${index}-total`" :class="$style.meta" :value="transaction.amount" />
     </span>
 
-    <!-- Column 8: Empty span -->
+    <!-- Column 9: Empty span -->
     <span />
 
-    <!-- Column 9: Empty span -->
+    <!-- Column 10: Empty span -->
     <span />
   </template>
 
