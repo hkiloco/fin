@@ -7,10 +7,15 @@
 
     <!-- Column Headers -->
     <span />
-    <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
-    <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
     <span />
-    <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
+    <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
+    <span />
+    <span>
+      <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
+    </span>
+    <span>
+      <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
+    </span>
     <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
     <span :class="[$style.columnHeader, $style.lastColumn]">{{ t('bankAccount.amount') }}</span>
     <span />
