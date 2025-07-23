@@ -1,6 +1,10 @@
 <template>
   <!-- Individual Transactions -->
   <template v-for="(transaction, index) of group.transactions" :key="transaction.id + index">
+    <!-- Column 1: Empty span -->
+    <span />
+
+    <!-- Column 2: Delete button -->
     <Button
       color="dimmed"
       :disabled="!allowDelete"
@@ -9,6 +13,7 @@
       @click="$emit('deleteTransaction', transaction.id)"
     />
 
+    <!-- Column 3: Date -->
     <span
       :class="[
         $style.gridCell,
@@ -26,6 +31,7 @@
       />
     </span>
 
+    <!-- Column 4: Payee -->
     <span :class="$style.header">
       <TextCell
         :modelValue="transaction.payee"
