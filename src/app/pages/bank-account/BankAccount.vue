@@ -17,13 +17,10 @@
           :class="$style.headerIcon"
         />
         <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
+        <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
       </div>
       <div :class="$style.accountInfo">
         <span :class="$style.accountName">{{ selectedBankAccount?.name }}</span>
-        <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
-        <span :class="$style.balance">
-          {{ t('bankAccount.balance') }}: <Currency :value="accountBalance" />
-        </span>
       </div>
 
       <!-- Transaction Summary -->
@@ -41,9 +38,9 @@
           </span>
         </div>
         <div :class="$style.summaryCard">
-          <span :class="$style.summaryLabel">{{ t('bankAccount.netChange') }}</span>
-          <span :class="[$style.summaryValue, accountSummary.net >= 0 ? $style.income : $style.expense]">
-            <Currency :value="accountSummary.net" />
+          <span :class="$style.summaryLabel">{{ t('bankAccount.balance') }}</span>
+          <span :class="[$style.summaryValue, accountBalance >= 0 ? $style.income : $style.expense]">
+            <Currency :value="accountBalance" />
           </span>
         </div>
         <div :class="$style.summaryCard">
@@ -139,7 +136,7 @@ const getAccountTypeLabel = (type?: string) => {
 .headerTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin-bottom: 12px;
 }
 
@@ -170,6 +167,7 @@ const getAccountTypeLabel = (type?: string) => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-size: var(--font-size-xs);
+  margin: 2px 0 0 2px;
 }
 
 .balance {
