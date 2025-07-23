@@ -1,14 +1,6 @@
 <template>
   <!-- Individual Transactions -->
   <template v-for="(transaction, index) of group.transactions" :key="transaction.id + index">
-    <Draggable
-      :id="transaction.id"
-      :target="['transaction-group', 'transaction-groups']"
-      name="transaction-group"
-      :text="buildDraggableText"
-      @drop="reorder"
-    />
-
     <Button
       color="dimmed"
       :disabled="!allowDelete"
