@@ -47,8 +47,19 @@ const value = computed(() =>
 );
 
 const keydown = (e: KeyboardEvent) => {
+  // Allow negative numbers by not preventing minus key
+  // Only prevent minus if it's not at the beginning
   if (e.key === '-') {
-    e.preventDefault();
+    const input = e.target as HTMLInputElement;
+    const cursorPosition = input.selectionStart || 0;
+    const currentValue = input.value;
+
+    // Prevent minus if:
+    // 1. It's not at the beginning of the input
+    // 2. There's already a minus sign in the value
+    if (cursorPosition > 0 || currentValue.includes('-')) {
+      e.preventDefault();
+    }
   }
 };
 
