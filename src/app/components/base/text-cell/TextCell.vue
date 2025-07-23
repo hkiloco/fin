@@ -57,9 +57,9 @@ const change = (e: Event) => {
 
   .input {
     all: unset;
-    max-width: var(--input-field-max-width);
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: 100%;
+    min-width: 100px;
+    overflow: visible;
   }
 
   &:not(.inline) {
