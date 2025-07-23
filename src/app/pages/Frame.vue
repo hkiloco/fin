@@ -367,5 +367,17 @@ const addBankAccount = () => {
   &.active {
     color: var(--c-primary);
   }
+
+  &.cashAccount {
+    color: var(--c-success);
+
+    &:hover {
+      color: var(--c-success-hover);
+    }
+
+    &.active {
+      color: var(--c-success);
+    }
+  }
 }
 </style>
