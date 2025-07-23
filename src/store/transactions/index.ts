@@ -6,8 +6,8 @@ export interface Transaction {
   bankAccountId: string;
   date: string;
   payee: string;
-  category: string;
-  notes?: string;
+  group: string;        // Maps to BudgetGroup (e.g., "Home", "Transportation")
+  category: string;     // Maps to Budget within group (e.g., "Rent/mortgage", "Food")
   amount: number;
   type: 'income' | 'expense';
   createdAt: string;
