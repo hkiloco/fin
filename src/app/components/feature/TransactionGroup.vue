@@ -39,6 +39,7 @@
       />
     </span>
 
+    <!-- Column 5: Group -->
     <span
       :class="[
         $style.gridCell,
@@ -58,6 +59,7 @@
       />
     </span>
 
+    <!-- Column 6: Category -->
     <span
       :class="[
         $style.gridCell,
@@ -76,6 +78,7 @@
       />
     </span>
 
+    <!-- Column 7: Amount -->
     <span
       :class="[
         $style.gridCell,
@@ -95,6 +98,10 @@
       <Currency :testId="`${testId}-transaction-${index}-total`" :class="$style.meta" :value="transaction.amount" />
     </span>
 
+    <!-- Column 8: Empty span -->
+    <span />
+
+    <!-- Column 9: Empty span -->
     <span />
   </template>
 
