@@ -86,7 +86,7 @@ export const useTransactionStore = () => {
       const newAmount = updates.amount ?? transaction.amount;
       Object.assign(transaction, {
         ...updates,
-        type: newAmount > 0 ? 'income' : 'expense',
+        type: newAmount >= 0 ? 'income' : 'expense',
         updatedAt: new Date().toISOString()
       });
     }
