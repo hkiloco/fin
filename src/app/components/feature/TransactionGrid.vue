@@ -1,34 +1,13 @@
 <template>
   <div :class="$style.transactionGrid">
-    <!-- Header -->
-    <span />
-    <span />
-    <span />
-
     <!-- Column Headers -->
     <span />
     <span />
     <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
-    <span />
-    <span>
-      <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
-    </span>
-    <span>
-      <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
-    </span>
+    <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
+    <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
     <span :class="[$style.columnHeader, $style.lastColumn]">{{ t('bankAccount.amount') }}</span>
-    <span />
-    <span />
-
-    <!-- Empty Filter Row -->
-    <span />
-    <span />
-    <span />
-    <span :class="[$style.dateFilter]" />
-    <span />
-    <span />
-    <span />
     <span />
     <span />
 
