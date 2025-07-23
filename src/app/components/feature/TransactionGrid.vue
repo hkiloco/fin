@@ -105,6 +105,8 @@ const filteredTransactions = computed(() => {
 const groupedTransactions = computed(() => {
   const groups = new Map<string, Transaction[]>();
 
+  console.log('Filtering transactions:', filteredTransactions.value.length);
+
   filteredTransactions.value.forEach(transaction => {
     const payee = transaction.payee || 'Unknown';
     if (!groups.has(payee)) {
@@ -113,11 +115,14 @@ const groupedTransactions = computed(() => {
     groups.get(payee)!.push(transaction);
   });
 
-  return Array.from(groups.entries()).map(([payee, transactions]) => ({
+  const result = Array.from(groups.entries()).map(([payee, transactions]) => ({
     payee,
     transactions,
     total: transactions.reduce((sum, t) => sum + t.amount, 0)
   }));
+
+  console.log('Grouped transactions:', result);
+  return result;
 });
 
 // Calculate totals by different categories
