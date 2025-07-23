@@ -366,13 +366,12 @@ const deleteTransaction = (id: string) => {
   font-weight: var(--font-weight-m);
 }
 
-.colCategory {
+.colGroup {
   font-size: var(--font-size-xs);
 }
 
-.colNotes {
-  font-size: var(--font-size-xs);
-  color: var(--c-text-dimmed);
+.colCategory {
+  display: none; // Hidden since BudgetSelector handles both group and category
 }
 
 .colAmount {
