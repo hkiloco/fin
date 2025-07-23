@@ -88,11 +88,21 @@ const { t } = useI18n();
 const transactionStore = useTransactionStore();
 const filterDate = ref<string>('');
 
+// Filter transactions by date if filter is set
+const filteredTransactions = computed(() => {
+  if (!filterDate.value) {
+    return props.transactions;
+  }
+  return props.transactions.filter(transaction =>
+    transaction.date === filterDate.value
+  );
+});
+
 // Group transactions by payee
 const groupedTransactions = computed(() => {
   const groups = new Map<string, Transaction[]>();
-  
-  props.transactions.forEach(transaction => {
+
+  filteredTransactions.value.forEach(transaction => {
     const payee = transaction.payee || 'Unknown';
     if (!groups.has(payee)) {
       groups.set(payee, []);
