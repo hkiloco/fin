@@ -129,7 +129,9 @@
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
 import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
-
+import { ReorderEvent } from '@components/base/draggable/Draggable.types';
+import Draggable from '@components/base/draggable/Draggable.vue';
+import { DraggableStore } from '@components/base/draggable/store';
 import TextCell from '@components/base/text-cell/TextCell.vue';
 import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
 import DatePicker from '@components/base/date-picker/DatePicker.vue';
