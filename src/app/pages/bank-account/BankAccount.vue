@@ -87,7 +87,9 @@
             {
               [$style.even]: index % 2,
               [$style.firstRow]: index === 0,
-              [$style.firstColumn]: true
+              [$style.firstColumn]: true,
+              [$style.tlc]: index === 0,
+              [$style.blc]: index === transactions.length - 1
             }
           ]">
             <DatePicker
@@ -140,7 +142,9 @@
             $style.currencyCell,
             {
               [$style.even]: index % 2,
-              [$style.firstRow]: index === 0
+              [$style.firstRow]: index === 0,
+              [$style.trc]: index === 0,
+              [$style.brc]: index === transactions.length - 1
             }
           ]">
             <CurrencyCell
@@ -463,14 +467,15 @@ const getCategoryOptions = (groupName: string) => {
   display: grid;
   grid-template-columns: 110px 2fr 150px 150px 120px 50px;
   gap: 0;
-  align-items: center;
+  align-items: stretch;
+  min-height: 40px;
 }
 
 .currencyCell {
   display: flex;
   align-items: center;
   background: var(--grid-background-odd);
-  height: 48px;
+  height: 100%;
   border-right: 1px solid var(--grid-border-color);
   border-bottom: 1px solid var(--grid-border-color);
   transition: background-color var(--input-field-transition);
@@ -493,6 +498,22 @@ const getCategoryOptions = (groupName: string) => {
 
   &.even {
     background: var(--grid-background-even);
+  }
+
+  &.tlc {
+    border-top-left-radius: var(--grid-border-radius);
+  }
+
+  &.trc {
+    border-top-right-radius: var(--grid-border-radius);
+  }
+
+  &.blc {
+    border-bottom-left-radius: var(--grid-border-radius);
+  }
+
+  &.brc {
+    border-bottom-right-radius: var(--grid-border-radius);
   }
 }
 
