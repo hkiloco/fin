@@ -1,6 +1,6 @@
 <template>
   <!-- Individual Transactions -->
-  <template v-for="(transaction, index) of group.transactions" :key="transaction.id + index">
+  <template v-for="(transaction, index) of group.transactions" :key="transaction.id">
     <!-- Column 1: Move button -->
     <Draggable
       :id="transaction.id"
