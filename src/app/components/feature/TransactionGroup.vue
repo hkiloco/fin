@@ -32,7 +32,15 @@
     </span>
 
     <!-- Column 4: Payee -->
-    <span :class="$style.header">
+    <span
+      :class="[
+        $style.gridCell,
+        {
+          [$style.even]: index % 2,
+          [$style.firstRow]: index === 0
+        }
+      ]"
+    >
       <TextCell
         :modelValue="transaction.payee"
         @update:model-value="$emit('updateTransaction', transaction.id, 'payee', $event)"
