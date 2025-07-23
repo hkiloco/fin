@@ -2,21 +2,21 @@
   <div :class="$style.budgetSelector">
     <!-- Group Selector -->
     <div :class="$style.field">
-      <Select
+      <InlineSelect
         v-model="selectedGroup"
-        :label="t('bankAccount.group')"
         :options="groupOptions"
+        placeholder="Select group..."
         @update:model-value="onGroupChange"
       />
     </div>
-    
+
     <!-- Category Selector -->
     <div :class="$style.field">
-      <Select
+      <InlineSelect
         v-model="selectedCategory"
-        :label="t('bankAccount.category')"
         :options="categoryOptions"
         :disabled="!selectedGroup"
+        placeholder="Select category..."
       />
     </div>
   </div>
