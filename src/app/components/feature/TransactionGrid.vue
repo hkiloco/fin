@@ -60,6 +60,7 @@
         :testId="`payee-${index}`"
         @updateTransaction="updateTransaction"
         @deleteTransaction="deleteTransaction"
+        @reorderTransaction="handleReorderTransaction"
       />
     </template>
 
