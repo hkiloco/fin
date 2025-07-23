@@ -99,12 +99,6 @@ const categoryOptions = computed(() => {
   const budgetGroup = allBudgetGroups.find(g => g.name === selectedGroup.value);
   const budgetCategories = budgetGroup ? budgetGroup.budgets.map(b => b.name) : [];
 
-  console.log('Category Debug:', {
-    selectedGroup: selectedGroup.value,
-    budgetGroup,
-    budgetCategories
-  });
-
   // Get existing transaction categories for this group
   const existingCategories = transactionStore.getAvailableCategoriesForGroup(selectedGroup.value).value;
 
