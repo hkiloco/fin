@@ -6,11 +6,11 @@
     <span />
 
     <!-- Column Headers -->
-    <span :class="[$style.columnHeader, $style.start]">{{ t('bankAccount.date') }}</span>
-    <span :class="[$style.columnHeader, $style.start]">{{ t('bankAccount.payee') }}</span>
+    <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
+    <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
-    <span :class="$style.columnHeader">{{ t('bankAccount.amount') }}</span>
+    <span :class="[$style.columnHeader, $style.lastColumn]">{{ t('bankAccount.amount') }}</span>
     <span />
     <span />
 
@@ -223,27 +223,24 @@ const addNewTransaction = () => {
 }
 
 .columnHeader {
+  background: var(--c-primary);
+  color: var(--c-text-light);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-m);
-  padding-right: 20px;
-  padding-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
+  margin: 4px 0;
+  padding: 5px 0;
   position: sticky;
-  position: -webkit-sticky;
   top: 0;
-  background: var(--app-background);
-  border: 2px var(--app-background);
 
-  &.start {
-    border-bottom-left-radius: var(--border-radius-l);
-    padding-left: 8px;
+  &.dateColumn {
+    border-radius: 6px 0 0 6px;
+    padding: 5px 4px 5px 8px;
   }
 
-  &:last-of-type {
-    border-bottom-right-radius: var(--border-radius-l);
-    padding-right: 8px;
+  &.lastColumn {
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 5px 8px 5px 0;
   }
 }
 
