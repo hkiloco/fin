@@ -77,17 +77,7 @@ const groupedTransactions = computed(() => {
 
 
 
-const buildDraggableIcon = (store: DraggableStore): Component | undefined =>
-  store.group === 'transaction-group' ? RiSkipDownLine : undefined;
 
-const buildDraggableText = (store: DraggableStore) => {
-  return 'Move transaction group';
-};
-
-const reorder = (evt: ReorderEvent) => {
-  // Handle reordering logic here
-  console.log('Reorder event:', evt);
-};
 
 const updateTransaction = (id: string, field: string, value: string | number) => {
   const updates: any = {};
