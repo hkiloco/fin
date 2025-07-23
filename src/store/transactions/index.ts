@@ -80,15 +80,22 @@ export const useTransactionStore = () => {
   };
 
   // Update transaction
-  const updateTransaction = (id: string, updates: Partial<Omit<Transaction, 'id' | 'createdAt'>>) => {
+  const updateTransaction = (id: string, updates: Partial<Omit<Transaction, 'id'>>) => {
     const transaction = transactions.value.find(t => t.id === id);
     if (transaction) {
       const newAmount = updates.amount ?? transaction.amount;
-      Object.assign(transaction, {
+
+      // Only update updatedAt if we're not updating createdAt (for reordering)
+      const updateData = {
         ...updates,
-        type: newAmount >= 0 ? 'income' : 'expense',
-        updatedAt: new Date().toISOString()
-      });
+        type: newAmount >= 0 ? 'income' : 'expense'
+      };
+
+      if (!updates.createdAt) {
+        updateData.updatedAt = new Date().toISOString();
+      }
+
+      Object.assign(transaction, updateData);
     }
   };
 
