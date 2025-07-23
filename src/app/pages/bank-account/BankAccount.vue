@@ -137,7 +137,9 @@ import TextCell from '@components/base/text-cell/TextCell.vue';
 import BudgetSelector from '@components/feature/BudgetSelector.vue';
 import {
   RiAddLine,
-  RiDeleteBinLine
+  RiDeleteBinLine,
+  RiMoneyDollarCircleLine,
+  RiBankLine
 } from '@remixicon/vue';
 import { useBankAccountStore } from '@store/bank-accounts';
 import { useTransactionStore, type Transaction } from '@store/transactions';
