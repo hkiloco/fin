@@ -193,7 +193,8 @@ const deleteAllTransactions = () => {
 };
 
 const addNewTransaction = () => {
-  transactionStore.addTransaction({
+  console.log('Adding new transaction for account:', props.accountId);
+  const newTransaction = transactionStore.addTransaction({
     bankAccountId: props.accountId || '',
     date: new Date().toISOString().split('T')[0],
     payee: '',
@@ -201,6 +202,7 @@ const addNewTransaction = () => {
     category: '',
     amount: 0
   });
+  console.log('Transaction added:', newTransaction);
 };
 </script>
 
