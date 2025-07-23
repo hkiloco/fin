@@ -1,89 +1,22 @@
 <template>
-  <div :class="$style.datePicker">
-    <input
-      :value="displayValue"
-      type="text"
-      readonly
-      :class="$style.input"
-      @click="togglePicker"
-      @keydown.enter="togglePicker"
-      @keydown.escape="closePicker"
-    />
-    
-    <Teleport to="body">
-      <div
-        v-if="showPicker"
-        :class="$style.overlay"
-        @click="closePicker"
-      >
-        <div
-          :class="$style.picker"
-          @click.stop
-          :style="{ top: `${pickerPosition.top}px`, left: `${pickerPosition.left}px` }"
-        >
-          <div :class="$style.header">
-            <button type="button" :class="$style.navButton" @click="previousMonth">
-              <RiArrowLeftSLine />
-            </button>
-            <span :class="$style.monthYear">
-              {{ currentMonthYear }}
-            </span>
-            <button type="button" :class="$style.navButton" @click="nextMonth">
-              <RiArrowRightSLine />
-            </button>
-          </div>
-          
-          <div :class="$style.calendar">
-            <div :class="$style.weekDays">
-              <span v-for="day in weekDays" :key="day" :class="$style.weekDay">
-                {{ day }}
-              </span>
-            </div>
-            
-            <div :class="$style.days">
-              <button
-                v-for="day in calendarDays"
-                :key="`${day.date}-${day.isCurrentMonth}`"
-                type="button"
-                :class="[
-                  $style.day,
-                  {
-                    [$style.otherMonth]: !day.isCurrentMonth,
-                    [$style.today]: day.isToday,
-                    [$style.selected]: day.isSelected
-                  }
-                ]"
-                @click="selectDate(day.date)"
-              >
-                {{ day.dayNumber }}
-              </button>
-            </div>
-          </div>
-          
-          <div :class="$style.footer">
-            <Button
-              :text="t('common.cancel')"
-              color="dimmed"
-              size="s"
-              @click="closePicker"
-            />
-            <Button
-              :text="t('datePicker.today')"
-              color="primary"
-              size="s"
-              @click="selectToday"
-            />
-          </div>
-        </div>
-      </div>
-    </Teleport>
-  </div>
+  <VueDatePicker
+    v-model="dateValue"
+    :format="dateFormat"
+    :enable-time-picker="false"
+    :auto-apply="true"
+    :clearable="false"
+    :inline="false"
+    :placeholder="t('datePicker.selectDate')"
+    :week-start="0"
+    :dark="isDark"
+    class="dp-custom"
+  />
 </template>
 
 <script lang="ts" setup>
-import Button from '@components/base/button/Button.vue';
-import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/vue';
-import { computed, nextTick, ref, watch } from 'vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
@@ -96,279 +29,150 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const showPicker = ref(false);
-const pickerPosition = ref({ top: 0, left: 0 });
-const viewDate = ref(new Date());
-
-// Parse the current value or use today
-const currentDate = computed(() => {
-  return props.modelValue ? new Date(props.modelValue) : new Date();
+// Check if dark mode is enabled
+const isDark = computed(() => {
+  return document.documentElement.classList.contains('dark') || 
+         window.matchMedia('(prefers-color-scheme: dark)').matches;
 });
 
-const displayValue = computed(() => {
-  if (!props.modelValue) return '';
+// Convert string date to Date object for the picker
+const dateValue = computed({
+  get() {
+    return props.modelValue ? new Date(props.modelValue) : null;
+  },
+  set(value: Date | null) {
+    if (value) {
+      // Convert to ISO date string (YYYY-MM-DD)
+      const isoString = value.toISOString().split('T')[0];
+      emit('update:modelValue', isoString);
+    } else {
+      emit('update:modelValue', '');
+    }
+  }
+});
+
+// Date format for display
+const dateFormat = computed(() => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
-  }).format(new Date(props.modelValue));
+  }).format(new Date()).includes(',') ? 'MMM dd, yyyy' : 'MMM dd yyyy';
 });
-
-const currentMonthYear = computed(() => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long'
-  }).format(viewDate.value);
-});
-
-const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
-const calendarDays = computed(() => {
-  const year = viewDate.value.getFullYear();
-  const month = viewDate.value.getMonth();
-  
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDate = new Date(firstDay);
-  startDate.setDate(startDate.getDate() - firstDay.getDay());
-  
-  const days = [];
-  const today = new Date();
-  const selectedDate = props.modelValue ? new Date(props.modelValue) : null;
-  
-  for (let i = 0; i < 42; i++) {
-    const date = new Date(startDate);
-    date.setDate(startDate.getDate() + i);
-    
-    const isCurrentMonth = date.getMonth() === month;
-    const isToday = date.toDateString() === today.toDateString();
-    const isSelected = selectedDate ? date.toDateString() === selectedDate.toDateString() : false;
-    
-    days.push({
-      date: date.toISOString().split('T')[0],
-      dayNumber: date.getDate(),
-      isCurrentMonth,
-      isToday,
-      isSelected
-    });
-  }
-  
-  return days;
-});
-
-const togglePicker = async (event: Event) => {
-  if (showPicker.value) {
-    closePicker();
-    return;
-  }
-  
-  const target = event.target as HTMLElement;
-  const rect = target.getBoundingClientRect();
-  
-  pickerPosition.value = {
-    top: rect.bottom + window.scrollY + 5,
-    left: rect.left + window.scrollX
-  };
-  
-  showPicker.value = true;
-  
-  // Set view date to current value or today
-  viewDate.value = props.modelValue ? new Date(props.modelValue) : new Date();
-};
-
-const closePicker = () => {
-  showPicker.value = false;
-};
-
-const selectDate = (dateString: string) => {
-  emit('update:modelValue', dateString);
-  closePicker();
-};
-
-const selectToday = () => {
-  const today = new Date().toISOString().split('T')[0];
-  selectDate(today);
-};
-
-const previousMonth = () => {
-  viewDate.value = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() - 1, 1);
-};
-
-const nextMonth = () => {
-  viewDate.value = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() + 1, 1);
-};
-
-// Close picker when clicking outside
-watch(showPicker, (isOpen) => {
-  if (isOpen) {
-    nextTick(() => {
-      document.addEventListener('keydown', handleEscape);
-    });
-  } else {
-    document.removeEventListener('keydown', handleEscape);
-  }
-});
-
-const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
-    closePicker();
-  }
-};
 </script>
 
-<style lang="scss" module>
-.datePicker {
-  position: relative;
+<style>
+/* Override Vue Datepicker styles to match app theme */
+.dp-custom {
+  --dp-font-family: inherit;
+  --dp-border-radius: var(--border-radius-s, 4px);
+  --dp-cell-border-radius: var(--border-radius-s, 4px);
+  --dp-button-height: 32px;
+  --dp-month-year-row-height: 32px;
+  --dp-cell-size: 32px;
+  --dp-cell-padding: 5px;
+  --dp-common-transition: all 0.1s ease-out;
+  --dp-menu-min-width: 260px;
+  --dp-animation-duration: 0.1s;
+  --dp-menu-appear-transition-timing: cubic-bezier(.4, 0, 1, 1);
+  --dp-transition-length: 0.1s;
 }
 
-.input {
-  all: unset;
-  appearance: none;
-  width: 100%;
-  cursor: pointer;
-  color: var(--theme-text);
-  font-weight: var(--font-weight-m);
-  font-size: inherit;
-  background: transparent;
+/* Light theme colors */
+.dp-custom {
+  --dp-background-color: var(--dialog-background, #ffffff);
+  --dp-text-color: var(--theme-text, #000000);
+  --dp-hover-color: var(--app-background-secondary, #f5f5f5);
+  --dp-hover-text-color: var(--theme-text, #000000);
+  --dp-hover-icon-color: var(--theme-text, #000000);
+  --dp-primary-color: var(--c-primary, #007bff);
+  --dp-primary-text-color: #ffffff;
+  --dp-secondary-color: var(--c-dimmed, #6c757d);
+  --dp-border-color: var(--app-border, #e0e0e0);
+  --dp-menu-border-color: var(--app-border, #e0e0e0);
+  --dp-border-color-hover: var(--c-primary, #007bff);
+  --dp-disabled-color: var(--c-dimmed, #6c757d);
+  --dp-scroll-bar-background: var(--app-background-secondary, #f5f5f5);
+  --dp-scroll-bar-color: var(--c-dimmed, #6c757d);
+  --dp-success-color: var(--c-success, #28a745);
+  --dp-success-color-disabled: var(--c-success, #28a745);
+  --dp-icon-color: var(--c-dimmed, #6c757d);
+  --dp-danger-color: var(--c-danger, #dc3545);
+  --dp-highlight-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Input styling to match app */
+.dp-custom .dp__input_wrap .dp__input {
   border: none;
+  background: transparent;
+  color: var(--theme-text);
+  font-size: inherit;
+  font-weight: var(--font-weight-m);
   padding: 2px 4px;
   border-radius: var(--border-radius-s);
   transition: all var(--transition-m);
-
-  &:hover {
-    color: var(--c-primary);
-    background: var(--app-background-secondary);
-  }
-
-  &:focus {
-    outline: 1px solid var(--c-primary);
-    outline-offset: 1px;
-    background: var(--app-background-secondary);
-  }
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  background: transparent;
+.dp-custom .dp__input_wrap .dp__input:hover {
+  background: var(--app-background-secondary);
+  color: var(--c-primary);
 }
 
-.picker {
-  position: absolute;
-  background: var(--dialog-background);
-  border-radius: var(--border-radius-l);
+.dp-custom .dp__input_wrap .dp__input:focus {
+  outline: 1px solid var(--c-primary);
+  outline-offset: 1px;
+  background: var(--app-background-secondary);
+}
+
+/* Menu positioning and shadow */
+.dp-custom .dp__menu {
   box-shadow: var(--dialog-box-shadow);
   border: 1px solid var(--app-border);
-  min-width: 280px;
-  z-index: 1001;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--app-border);
-}
-
-.navButton {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--border-radius-m);
-  cursor: pointer;
-  color: var(--c-dimmed);
-  transition: all var(--transition-m);
-  
-  &:hover {
-    background: var(--app-background-secondary);
-    color: var(--theme-text);
-  }
-}
-
-.monthYear {
-  font-weight: var(--font-weight-l);
+/* Header buttons */
+.dp-custom .dp__month_year_wrap .dp__month_year_select,
+.dp-custom .dp__arrow_top {
   color: var(--theme-text);
-  font-size: var(--font-size-m);
 }
 
-.calendar {
-  padding: 16px;
+.dp-custom .dp__arrow_top:hover {
+  background: var(--app-background-secondary);
+  color: var(--c-primary);
 }
 
-.weekDays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.weekDay {
-  text-align: center;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-l);
+/* Calendar cells */
+.dp-custom .dp__calendar_header_item {
   color: var(--c-dimmed);
-  padding: 8px 4px;
+  font-weight: var(--font-weight-l);
 }
 
-.days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-
-.day {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--border-radius-m);
-  cursor: pointer;
-  font-size: var(--font-size-s);
+.dp-custom .dp__calendar_item .dp__cell_inner {
   color: var(--theme-text);
-  transition: all var(--transition-m);
-  
-  &:hover {
-    background: var(--app-background-secondary);
-  }
-  
-  &.otherMonth {
-    color: var(--c-dimmed);
-  }
-  
-  &.today {
-    background: var(--c-primary);
-    color: white;
-    
-    &:hover {
-      background: var(--c-primary-hover);
-    }
-  }
-  
-  &.selected {
-    background: var(--c-success);
-    color: white;
-    
-    &:hover {
-      background: var(--c-success-hover);
-    }
-  }
 }
 
-.footer {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  padding: 16px;
-  border-top: 1px solid var(--app-border);
+.dp-custom .dp__calendar_item:hover .dp__cell_inner {
+  background: var(--app-background-secondary);
+  color: var(--theme-text);
+}
+
+.dp-custom .dp__today {
+  border: 1px solid var(--c-primary);
+}
+
+.dp-custom .dp__active_date .dp__cell_inner,
+.dp-custom .dp__range_between .dp__cell_inner {
+  background: var(--c-primary);
+  color: white;
+}
+
+/* Remove the input icon */
+.dp-custom .dp__input_wrap .dp__input_icon {
+  display: none;
+}
+
+/* Make the input wrapper fill available space */
+.dp-custom .dp__input_wrap {
+  width: 100%;
 }
 </style>
