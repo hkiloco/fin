@@ -70,7 +70,7 @@ export const useTransactionStore = () => {
     const newTransaction: Transaction = {
       ...transaction,
       id: uuid(),
-      type: transaction.amount > 0 ? 'income' : 'expense',
+      type: transaction.amount >= 0 ? 'income' : 'expense',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
