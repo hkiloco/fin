@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import Select from '@components/base/select/Select.vue';
+import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
 import { useDataStore } from '@store/state';
 import { useTransactionStore } from '@store/transactions';
 import { computed, watch } from 'vue';
