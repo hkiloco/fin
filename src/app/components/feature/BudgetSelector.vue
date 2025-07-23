@@ -125,12 +125,14 @@ watch([() => props.group, () => props.category], ([newGroup, newCategory]) => {
 <style lang="scss" module>
 .budgetSelector {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
+  align-items: center;
 }
 
 .field {
   flex: 1;
   min-width: 0;
+  font-size: inherit;
 }
 </style>
