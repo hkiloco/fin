@@ -38,13 +38,22 @@ const invalid = ref(false);
 const { state } = useDataStore();
 const { locale, n } = useI18n();
 
-const value = computed(() =>
-  invalid.value
-    ? innerValue.value
-    : focused.value || !modelValue.value
-      ? modelValue.value || ''
-      : n(modelValue.value, { key: 'currency', currency: state.currency })
-);
+const value = computed(() => {
+  if (invalid.value) {
+    return innerValue.value;
+  }
+
+  if (focused.value) {
+    return modelValue.value || '';
+  }
+
+  // Always format as currency when not focused, including negative values
+  if (modelValue.value !== undefined && modelValue.value !== null) {
+    return n(modelValue.value, { key: 'currency', currency: state.currency });
+  }
+
+  return '';
+});
 
 const keydown = (e: KeyboardEvent) => {
   // Allow negative numbers by not preventing minus key
