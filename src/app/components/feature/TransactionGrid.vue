@@ -80,7 +80,6 @@ const props = defineProps<{
 const { t } = useI18n();
 const transactionStore = useTransactionStore();
 const { state: dataState } = useDataStore();
-const filterDate = ref<string>('');
 
 // Filter transactions by date if filter is set
 const filteredTransactions = computed(() => {
