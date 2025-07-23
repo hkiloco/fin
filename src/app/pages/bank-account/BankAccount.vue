@@ -218,6 +218,15 @@ const bankAccountStore = useBankAccountStore();
 const transactionStore = useTransactionStore();
 const { state: dataState } = useDataStore();
 
+// Grid headers
+const gridHeaders = computed(() => [
+  t('bankAccount.date'),
+  t('bankAccount.payee'),
+  t('bankAccount.group'),
+  t('bankAccount.category'),
+  t('bankAccount.amount')
+]);
+
 // Get selected bank account from route parameter
 const accountSlug = computed(() => route.params.accountSlug as string || '');
 const selectedBankAccount = computed(() => {
