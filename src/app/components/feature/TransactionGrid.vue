@@ -158,22 +158,13 @@ const sortedTransactions = computed(() => {
   });
 });
 
-// Group transactions by payee (after sorting)
+// Group transactions by payee (after sorting) - but keep individual transactions when editing
 const groupedTransactions = computed(() => {
-  const groups = new Map<string, Transaction[]>();
-
-  sortedTransactions.value.forEach(transaction => {
-    const payee = transaction.payee || 'Unknown';
-    if (!groups.has(payee)) {
-      groups.set(payee, []);
-    }
-    groups.get(payee)!.push(transaction);
-  });
-
-  return Array.from(groups.entries()).map(([payee, transactions]) => ({
-    payee,
-    transactions,
-    total: transactions.reduce((sum, t) => sum + t.amount, 0)
+  // For now, treat each transaction as its own group to prevent position jumping during editing
+  return sortedTransactions.value.map(transaction => ({
+    payee: transaction.payee || 'Unknown',
+    transactions: [transaction],
+    total: transaction.amount
   }));
 });
 
