@@ -43,7 +43,7 @@ import Currency from '@components/base/currency/Currency.vue';
 import { RiAddCircleLine } from '@remixicon/vue';
 import { useTransactionStore, type Transaction } from '@store/transactions';
 import { useDataStore } from '@store/state';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Component } from 'vue';
 
