@@ -208,7 +208,7 @@ const addTransaction = () => {
   transactionStore.addTransaction({
     bankAccountId: '',
     date: new Date().toISOString().split('T')[0],
-    payee: props.group.payee,
+    payee: '', // Empty payee as requested
     group: '',
     category: '',
     amount: 0
