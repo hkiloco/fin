@@ -53,149 +53,18 @@
       </div>
     </div>
 
-    <!-- Transaction Grid -->
-    <div :class="$style.transactionGrid">
-      <div :class="$style.gridActions">
-        <Button
-          :icon="RiAddLine"
-          :text="t('bankAccount.addTransaction')"
-          color="primary"
-          size="s"
-          @click="addNewTransaction"
-        />
-      </div>
-
-      <div :class="$style.grid">
-        <!-- Grid Header -->
-        <div
-          v-for="(header, colIndex) in gridHeaders"
-          :key="`header-${colIndex}`"
-          :class="[
-            $style.gridCell,
-            $style.headerCell,
-            {
-              [$style.tlc]: colIndex === 0,
-              [$style.trc]: colIndex === gridHeaders.length - 1
-            }
-          ]"
-        >
-          {{ header }}
-        </div>
-
-        <!-- Grid Rows -->
-        <template v-for="(transaction, rowIndex) in transactions" :key="transaction.id">
-          <div
-            :class="[
-              $style.gridCell,
-              {
-                [$style.even]: rowIndex % 2 === 1,
-                [$style.blc]: rowIndex === transactions.length - 1,
-                [$style.tlc]: rowIndex === 0 && gridHeaders.length === 0
-              }
-            ]"
-          >
-            <DatePicker
-              :modelValue="transaction.date"
-              @update:model-value="updateTransaction(transaction.id, 'date', $event)"
-            />
-          </div>
-
-          <div
-            :class="[
-              $style.gridCell,
-              {
-                [$style.even]: rowIndex % 2 === 1
-              }
-            ]"
-          >
-            <TextCell
-              :modelValue="transaction.payee"
-              @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
-            />
-          </div>
-
-          <div
-            :class="[
-              $style.gridCell,
-              {
-                [$style.even]: rowIndex % 2 === 1
-              }
-            ]"
-          >
-            <InlineSelect
-              v-model="transaction.group"
-              :options="getGroupOptions()"
-              placeholder="Select group..."
-              @update:model-value="updateTransaction(transaction.id, 'group', $event)"
-            />
-          </div>
-
-          <div
-            :class="[
-              $style.gridCell,
-              {
-                [$style.even]: rowIndex % 2 === 1
-              }
-            ]"
-          >
-            <InlineSelect
-              v-model="transaction.category"
-              :options="getCategoryOptions(transaction.group)"
-              :disabled="!transaction.group"
-              placeholder="Select category..."
-              @update:model-value="updateTransaction(transaction.id, 'category', $event)"
-            />
-          </div>
-
-          <div
-            :class="[
-              $style.gridCell,
-              {
-                [$style.even]: rowIndex % 2 === 1,
-                [$style.brc]: rowIndex === transactions.length - 1,
-                [$style.trc]: rowIndex === 0 && gridHeaders.length === 0
-              }
-            ]"
-          >
-            <CurrencyCell
-              :modelValue="transaction.amount"
-              @update:model-value="updateTransaction(transaction.id, 'amount', $event)"
-            />
-          </div>
-
-          <div :class="$style.actionCell">
-            <Button
-              :icon="RiDeleteBinLine"
-              color="danger"
-              size="s"
-              textual
-              @click="deleteTransaction(transaction.id)"
-            />
-          </div>
-        </template>
-
-        <!-- Empty state -->
-        <div v-if="transactions.length === 0" :class="$style.emptyGrid">
-          <p>{{ t('bankAccount.noTransactions') }}</p>
-          <Button
-            :icon="RiAddLine"
-            :text="t('bankAccount.addFirstTransaction')"
-            color="primary"
-            @click="addNewTransaction"
-          />
-        </div>
-      </div>
-    </div>
+    <!-- Transaction Pane -->
+    <TransactionPane
+      :title="t('bankAccount.transactions')"
+      :accountId="selectedBankAccount?.id"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
-import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
-import DatePicker from '@components/base/date-picker/DatePicker.vue';
-import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
-import TextCell from '@components/base/text-cell/TextCell.vue';
+import TransactionPane from '@components/feature/TransactionPane.vue';
 import {
   RiAddLine,
   RiDeleteBinLine,
@@ -218,14 +87,7 @@ const bankAccountStore = useBankAccountStore();
 const transactionStore = useTransactionStore();
 const { state: dataState } = useDataStore();
 
-// Grid headers
-const gridHeaders = computed(() => [
-  t('bankAccount.date'),
-  t('bankAccount.payee'),
-  t('bankAccount.group'),
-  t('bankAccount.category'),
-  t('bankAccount.amount')
-]);
+
 
 // Get selected bank account from route parameter
 const accountSlug = computed(() => route.params.accountSlug as string || '');
