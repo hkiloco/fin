@@ -191,8 +191,8 @@ const addNewTransaction = () => {
     bankAccountId: selectedBankAccount.value.id,
     date: new Date().toISOString().split('T')[0],
     payee: '',
+    group: '',
     category: '',
-    notes: '',
     amount: 0
   });
 };
