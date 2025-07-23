@@ -56,6 +56,10 @@ const { t } = useI18n();
 const transactionStore = useTransactionStore();
 const { state: dataState } = useDataStore();
 
+// Sorting state
+const sortField = ref<'date' | 'payee' | 'group' | 'category' | 'amount'>('date');
+const sortDirection = ref<'asc' | 'desc'>('desc'); // Default to newest first
+
 // Group transactions by payee
 const groupedTransactions = computed(() => {
   const groups = new Map<string, Transaction[]>();
