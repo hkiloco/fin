@@ -136,16 +136,7 @@ const formatDate = (dateString: string) => {
 
 
 
-const addTransaction = () => {
-  transactionStore.addTransaction({
-    bankAccountId: '',
-    date: new Date().toISOString().split('T')[0],
-    payee: '', // Empty payee as requested
-    group: '',
-    category: '',
-    amount: 0
-  });
-};
+
 
 // Helper functions for group and category options
 const getGroupOptions = () => {
