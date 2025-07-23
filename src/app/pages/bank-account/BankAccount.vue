@@ -437,83 +437,53 @@ const getCategoryOptions = (groupName: string) => {
   }
 }
 
-.transactionContainer {
+.transactionGrid {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.tableActions {
+.gridActions {
   padding: 16px 20px;
   border-bottom: 1px solid var(--app-border);
   background: var(--app-background-secondary);
 }
 
-.transactionTable {
-  flex: 1;
+.grid {
+  display: grid;
+  grid-template-columns: 110px 2fr 150px 150px 120px 50px;
+  gap: 0;
   overflow-y: auto;
 }
 
-.tableHeader {
-  display: grid;
-  grid-template-columns: 110px 2fr 150px 150px 120px 50px;
-  gap: 0;
-  background: var(--grid-header-background);
-  color: var(--grid-header-text);
-  font-weight: var(--font-weight-l);
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-
-  > span {
-    display: flex;
-    align-items: center;
-    padding: 12px 8px;
-    border-right: 1px solid var(--grid-border-color);
-    border-bottom: 2px solid var(--grid-border-color);
-    border-top: 1px solid var(--grid-border-color);
-
-    &:first-child {
-      border-left: 1px solid var(--grid-border-color);
-    }
-  }
-}
-
-.tableRow {
-  display: grid;
-  grid-template-columns: 110px 2fr 150px 150px 120px 50px;
-  gap: 0;
-  align-items: stretch;
-  min-height: 40px;
-}
-
-.currencyCell {
+.gridCell {
   display: flex;
   align-items: center;
   background: var(--grid-background-odd);
   height: 100%;
   border-right: 1px solid var(--grid-border-color);
   border-bottom: 1px solid var(--grid-border-color);
-  transition: background-color var(--input-field-transition);
-  box-shadow: inset 0 0 0 1px transparent;
+  border-top: 1px solid var(--grid-border-color);
   padding: 0 8px;
   font-size: var(--font-size-xs);
+  min-height: 40px;
 
-  &.firstRow {
-    border-top: 1px solid var(--grid-border-color);
-  }
-
-  &.firstColumn {
+  &:nth-child(6n+1) {
     border-left: 1px solid var(--grid-border-color);
   }
 
-  &:focus-within {
-    box-shadow: 0 0 0 2px var(--c-primary) inset;
-    border-radius: 1px;
+  &.headerCell {
+    background: var(--grid-header-background);
+    color: var(--grid-header-text);
+    font-weight: var(--font-weight-l);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--grid-border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   &.even {
@@ -535,18 +505,26 @@ const getCategoryOptions = (groupName: string) => {
   &.brc {
     border-bottom-right-radius: var(--grid-border-radius);
   }
+
+  &:focus-within {
+    box-shadow: 0 0 0 2px var(--c-primary) inset;
+    border-radius: 1px;
+  }
 }
 
-.colActions {
+.actionCell {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 48px;
   background: var(--app-background-secondary);
   border-bottom: 1px solid var(--app-border);
+  border-right: 1px solid var(--grid-border-color);
+  border-top: 1px solid var(--grid-border-color);
+  min-height: 40px;
 }
 
-.emptyState {
+.emptyGrid {
+  grid-column: 1 / -1;
   text-align: center;
   padding: 80px 20px;
   color: var(--c-text-dimmed);
