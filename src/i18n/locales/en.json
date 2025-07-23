@@ -108,11 +108,14 @@
     "close": "Close",
     "goBack": "Go Back"
   },
+  "datePicker": {
+    "today": "Today"
+  },
   "shared": {
     "addGroup": "Add Group",
     "append": "Move “{from}” after “{to}”",
     "average": "Average",
-    "move": "Move “{from}���",
+    "move": "Move “{from}”",
     "moveInto": "Move “{from}” into “{to}”",
     "prepend": "Move “{from}” before “{to}”",
     "fillRow": "Fill row",
