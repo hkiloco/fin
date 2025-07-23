@@ -535,31 +535,34 @@ const getCategoryOptions = (groupName: string) => {
 }
 
 @media (max-width: 768px) {
-  .tableHeader,
-  .tableRow {
-    grid-template-columns: 1fr;
-    gap: 4px;
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .tableHeader {
-    display: none;
-  }
+  .gridCell {
+    border: 1px solid var(--grid-border-color);
+    border-radius: 4px;
+    margin-bottom: 4px;
 
-  .tableRow {
-    display: block;
-    padding: 16px;
-
-    > span {
-      display: block;
-      margin-bottom: 8px;
-
-      &:before {
-        content: attr(data-label) ': ';
-        font-weight: var(--font-weight-m);
-        color: var(--c-text-dimmed);
-        font-size: var(--font-size-xs);
-      }
+    &.headerCell {
+      display: none;
     }
+
+    &:before {
+      content: attr(data-label) ': ';
+      font-weight: var(--font-weight-m);
+      color: var(--c-text-dimmed);
+      font-size: var(--font-size-xs);
+      margin-right: 8px;
+    }
+  }
+
+  .actionCell {
+    border: 1px solid var(--grid-border-color);
+    border-radius: 4px;
+    margin-bottom: 4px;
   }
 }
 
