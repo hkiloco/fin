@@ -106,8 +106,21 @@ watch(focused, (value) => {
   }
 
   try {
-    modelValue.value = innerValue.value ? evalMathExpression(innerValue.value, locale.value) : 0;
-    invalid.value = false;
+    if (innerValue.value) {
+      // Handle simple negative numbers first
+      const numericValue = parseFloat(innerValue.value);
+      if (!isNaN(numericValue)) {
+        modelValue.value = numericValue;
+        invalid.value = false;
+      } else {
+        // Fall back to math expression evaluation for complex expressions
+        modelValue.value = evalMathExpression(innerValue.value, locale.value);
+        invalid.value = false;
+      }
+    } else {
+      modelValue.value = 0;
+      invalid.value = false;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
