@@ -135,9 +135,10 @@ const addNewTransaction = () => {
 
 .transactionGrid {
   display: grid;
-  grid-template: auto / max-content max-content max-content max-content 1fr 1fr 1fr 1fr max-content;
+  grid-template-columns: max-content max-content 110px 2fr 150px 150px 120px 50px max-content;
   align-items: center;
   padding-bottom: 20px;
+  gap: 0;
 }
 
 .sum {
