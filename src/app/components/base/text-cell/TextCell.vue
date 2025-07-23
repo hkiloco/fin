@@ -41,7 +41,12 @@ const classes = computed(() => [
 
 const focus = () => {
   focused.value = true;
-  nextTick(() => (input.value as HTMLInputElement).select());
+  // Don't auto-select text to allow normal typing
+  nextTick(() => {
+    if (input.value && !modelValue.value) {
+      input.value.focus();
+    }
+  });
 };
 
 const change = (e: Event) => {
