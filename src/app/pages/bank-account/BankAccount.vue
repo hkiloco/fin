@@ -243,8 +243,20 @@ const deleteTransaction = (id: string) => {
   border-bottom: 2px solid var(--app-border);
 }
 
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.headerIcon {
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .bankName {
-  margin: 0 0 12px 0;
+  margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-l);
   color: white;
