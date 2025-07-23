@@ -39,9 +39,7 @@
 import TransactionGroup from './TransactionGroup.vue';
 import Button from '@components/base/button/Button.vue';
 import Currency from '@components/base/currency/Currency.vue';
-import { ReorderEvent } from '@components/base/draggable/Draggable.types';
-import Draggable from '@components/base/draggable/Draggable.vue';
-import { DraggableStore } from '@components/base/draggable/store';
+
 import { RiAddCircleLine, RiSkipDownLine } from '@remixicon/vue';
 import { useTransactionStore, type Transaction } from '@store/transactions';
 import { useDataStore } from '@store/state';
