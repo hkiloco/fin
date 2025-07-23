@@ -153,6 +153,7 @@
   },
   "bankAccount": {
     "bankAccount": "Bank Account",
+    "transactions": "Transactions",
     "balance": "Balance",
     "thisMonth": "This Month",
     "transactionsFor": "Transactions for {year}",
