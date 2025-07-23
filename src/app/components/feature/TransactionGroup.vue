@@ -166,12 +166,29 @@ const formatDate = (dateString: string) => {
 };
 
 const buildDraggableText = (store: DraggableStore) => {
+  const sourceTransaction = props.group.transactions.find(t => t.id === store.source);
+  if (sourceTransaction) {
+    return `Move transaction: ${sourceTransaction.payee || 'Unknown'} - ${formatCurrency(sourceTransaction.amount)}`;
+  }
   return `Move transaction`;
 };
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP'
+  }).format(amount);
+};
+
 const reorder = (evt: ReorderEvent) => {
-  // Handle transaction reordering
-  console.log('Reorder transaction:', evt);
+  if (evt.source && evt.target) {
+    // Emit event to parent to handle reordering
+    emit('reorderTransaction', {
+      sourceId: evt.source,
+      targetId: evt.target,
+      type: evt.type
+    });
+  }
 };
 
 
