@@ -1,8 +1,14 @@
 <template>
   <!-- Individual Transactions -->
   <template v-for="(transaction, index) of group.transactions" :key="transaction.id + index">
-    <!-- Column 1: Empty span -->
-    <span />
+    <!-- Column 1: Move button -->
+    <Draggable
+      :id="transaction.id"
+      :target="['transaction', 'transactions']"
+      name="transaction"
+      :text="buildDraggableText"
+      @drop="reorder"
+    />
 
     <!-- Column 2: Delete button -->
     <Button
@@ -12,6 +18,9 @@
       textual
       @click="$emit('deleteTransaction', transaction.id)"
     />
+
+    <!-- Column 3: Empty span -->
+    <span />
 
     <!-- Column 3: Date -->
     <span
