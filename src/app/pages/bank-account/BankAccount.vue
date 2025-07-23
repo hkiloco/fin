@@ -73,7 +73,7 @@
           :class="[$style.tableRow, { [$style.even]: index % 2 === 1 }]"
         >
           <span :class="$style.colDate">
-            <TextCell
+            <DatePicker
               :modelValue="transaction.date"
               @update:model-value="updateTransaction(transaction.id, 'date', $event)"
             />
