@@ -134,28 +134,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString();
 };
 
-const buildDraggableText = (store: DraggableStore) => {
-  return `Move transaction`;
-};
 
-const reorder = (evt: ReorderEvent) => {
-  // Handle transaction reordering
-  console.log('Reorder transaction:', evt);
-};
-
-const deletePayeeGroup = () => {
-  if (confirm(`Delete all transactions for ${props.group.payee}?`)) {
-    props.group.transactions.forEach(transaction => {
-      emit('deleteTransaction', transaction.id);
-    });
-  }
-};
-
-const updatePayeeName = (newName: string) => {
-  props.group.transactions.forEach(transaction => {
-    emit('updateTransaction', transaction.id, 'payee', newName);
-  });
-};
 
 const addTransaction = () => {
   transactionStore.addTransaction({
