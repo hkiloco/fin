@@ -66,7 +66,7 @@ export const useTransactionStore = () => {
   };
 
   // Add new transaction
-  const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addTransaction = (transaction: Omit<Transaction, 'id' | 'type' | 'createdAt' | 'updatedAt'>) => {
     const newTransaction: Transaction = {
       ...transaction,
       id: uuid(),
@@ -74,7 +74,7 @@ export const useTransactionStore = () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    
+
     transactions.value.push(newTransaction);
     return newTransaction;
   };
