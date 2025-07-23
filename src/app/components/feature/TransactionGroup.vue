@@ -103,7 +103,7 @@ import CurrencyCell from '@components/base/currency-cell/CurrencyCell.vue';
 import TextCell from '@components/base/text-cell/TextCell.vue';
 import InlineSelect from '@components/base/inline-select/InlineSelect.vue';
 import DatePicker from '@components/base/date-picker/DatePicker.vue';
-import { RiAddCircleLine, RiCloseCircleLine } from '@remixicon/vue';
+import { RiCloseCircleLine } from '@remixicon/vue';
 import { useDataStore } from '@store/state';
 import { useTransactionStore, type Transaction } from '@store/transactions';
 import { computed } from 'vue';
