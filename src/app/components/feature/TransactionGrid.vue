@@ -114,15 +114,15 @@ const sortedTransactions = computed(() => {
 
       if (sortField.value === 'date') {
         if (sortDirection.value === 'asc') {
-          // Oldest first: earlier dates first, then by creation order (id)
-          return aDate.getTime() - bDate.getTime() || a.id.localeCompare(b.id);
+          // Oldest first: earlier dates first, then by creation time (earliest first)
+          return aDate.getTime() - bDate.getTime() || new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         } else {
-          // Newest first: later dates first, then by reverse creation order (newer id first)
-          return bDate.getTime() - aDate.getTime() || b.id.localeCompare(a.id);
+          // Newest first: later dates first, then by creation time (latest first)
+          return bDate.getTime() - aDate.getTime() || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         }
       } else {
         // Default: newest first, with newest created transactions at top
-        return bDate.getTime() - aDate.getTime() || b.id.localeCompare(a.id);
+        return bDate.getTime() - aDate.getTime() || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       }
     });
   }
