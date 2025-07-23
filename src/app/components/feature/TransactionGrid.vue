@@ -3,6 +3,7 @@
     <!-- Column Headers -->
     <span />
     <span />
+    <span />
     <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
