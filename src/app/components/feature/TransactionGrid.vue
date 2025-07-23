@@ -109,6 +109,22 @@ const addNewTransaction = () => {
     amount: 0
   });
 };
+
+// Keyboard event handler
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && e.ctrlKey) {
+    addNewTransaction();
+  }
+};
+
+// Add/remove event listeners
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <style lang="scss" module>
