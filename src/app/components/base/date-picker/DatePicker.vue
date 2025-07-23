@@ -227,9 +227,23 @@ const handleEscape = (event: KeyboardEvent) => {
   width: 100%;
   cursor: pointer;
   color: var(--theme-text);
-  
+  font-weight: var(--font-weight-m);
+  font-size: inherit;
+  background: transparent;
+  border: none;
+  padding: 2px 4px;
+  border-radius: var(--border-radius-s);
+  transition: all var(--transition-m);
+
   &:hover {
     color: var(--c-primary);
+    background: var(--app-background-secondary);
+  }
+
+  &:focus {
+    outline: 1px solid var(--c-primary);
+    outline-offset: 1px;
+    background: var(--app-background-secondary);
   }
 }
 
