@@ -53,9 +53,9 @@
       </div>
     </div>
 
-    <!-- Transaction Table -->
-    <div :class="$style.transactionContainer">
-      <div :class="$style.tableActions">
+    <!-- Transaction Grid -->
+    <div :class="$style.transactionGrid">
+      <div :class="$style.gridActions">
         <Button
           :icon="RiAddLine"
           :text="t('bankAccount.addTransaction')"
@@ -65,71 +65,79 @@
         />
       </div>
 
-      <div :class="$style.transactionTable">
-        <!-- Table Header -->
-        <div :class="$style.tableHeader">
-          <span :class="$style.colDate">{{ t('bankAccount.date') }}</span>
-          <span :class="$style.colPayee">{{ t('bankAccount.payee') }}</span>
-          <span :class="$style.colGroup">{{ t('bankAccount.group') }}</span>
-          <span :class="$style.colCategory">{{ t('bankAccount.category') }}</span>
-          <span :class="$style.colAmount">{{ t('bankAccount.amount') }}</span>
-          <span :class="$style.colActions"></span>
+      <div :class="$style.grid">
+        <!-- Grid Header -->
+        <div
+          v-for="(header, colIndex) in gridHeaders"
+          :key="`header-${colIndex}`"
+          :class="[
+            $style.gridCell,
+            $style.headerCell,
+            {
+              [$style.tlc]: colIndex === 0,
+              [$style.trc]: colIndex === gridHeaders.length - 1
+            }
+          ]"
+        >
+          {{ header }}
         </div>
 
-        <!-- Transaction Rows -->
-        <div
-          v-for="(transaction, index) in transactions"
-          :key="transaction.id"
-          :class="[$style.tableRow, { [$style.even]: index % 2 === 1 }]"
-        >
-          <span :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: index % 2,
-              [$style.firstRow]: index === 0,
-              [$style.firstColumn]: true,
-              [$style.tlc]: index === 0,
-              [$style.blc]: index === transactions.length - 1
-            }
-          ]">
+        <!-- Grid Rows -->
+        <template v-for="(transaction, rowIndex) in transactions" :key="transaction.id">
+          <div
+            :class="[
+              $style.gridCell,
+              {
+                [$style.even]: rowIndex % 2 === 1,
+                [$style.blc]: rowIndex === transactions.length - 1,
+                [$style.tlc]: rowIndex === 0 && gridHeaders.length === 0
+              }
+            ]"
+          >
             <DatePicker
               :modelValue="transaction.date"
               @update:model-value="updateTransaction(transaction.id, 'date', $event)"
             />
-          </span>
-          <span :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: index % 2,
-              [$style.firstRow]: index === 0
-            }
-          ]">
+          </div>
+
+          <div
+            :class="[
+              $style.gridCell,
+              {
+                [$style.even]: rowIndex % 2 === 1
+              }
+            ]"
+          >
             <TextCell
               :modelValue="transaction.payee"
               @update:model-value="updateTransaction(transaction.id, 'payee', $event)"
             />
-          </span>
-          <span :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: index % 2,
-              [$style.firstRow]: index === 0
-            }
-          ]">
+          </div>
+
+          <div
+            :class="[
+              $style.gridCell,
+              {
+                [$style.even]: rowIndex % 2 === 1
+              }
+            ]"
+          >
             <InlineSelect
               v-model="transaction.group"
               :options="getGroupOptions()"
               placeholder="Select group..."
               @update:model-value="updateTransaction(transaction.id, 'group', $event)"
             />
-          </span>
-          <span :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: index % 2,
-              [$style.firstRow]: index === 0
-            }
-          ]">
+          </div>
+
+          <div
+            :class="[
+              $style.gridCell,
+              {
+                [$style.even]: rowIndex % 2 === 1
+              }
+            ]"
+          >
             <InlineSelect
               v-model="transaction.category"
               :options="getCategoryOptions(transaction.group)"
@@ -137,22 +145,25 @@
               placeholder="Select category..."
               @update:model-value="updateTransaction(transaction.id, 'category', $event)"
             />
-          </span>
-          <span :class="[
-            $style.currencyCell,
-            {
-              [$style.even]: index % 2,
-              [$style.firstRow]: index === 0,
-              [$style.trc]: index === 0,
-              [$style.brc]: index === transactions.length - 1
-            }
-          ]">
+          </div>
+
+          <div
+            :class="[
+              $style.gridCell,
+              {
+                [$style.even]: rowIndex % 2 === 1,
+                [$style.brc]: rowIndex === transactions.length - 1,
+                [$style.trc]: rowIndex === 0 && gridHeaders.length === 0
+              }
+            ]"
+          >
             <CurrencyCell
               :modelValue="transaction.amount"
               @update:model-value="updateTransaction(transaction.id, 'amount', $event)"
             />
-          </span>
-          <span :class="$style.colActions">
+          </div>
+
+          <div :class="$style.actionCell">
             <Button
               :icon="RiDeleteBinLine"
               color="danger"
@@ -160,11 +171,11 @@
               textual
               @click="deleteTransaction(transaction.id)"
             />
-          </span>
-        </div>
+          </div>
+        </template>
 
         <!-- Empty state -->
-        <div v-if="transactions.length === 0" :class="$style.emptyState">
+        <div v-if="transactions.length === 0" :class="$style.emptyGrid">
           <p>{{ t('bankAccount.noTransactions') }}</p>
           <Button
             :icon="RiAddLine"
