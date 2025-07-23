@@ -100,35 +100,7 @@ const groupedTransactions = computed(() => {
   }));
 });
 
-// Calculate totals by different categories
-const totalsByPayee = computed(() => {
-  return groupedTransactions.value.map(group => ({
-    payee: group.payee,
-    total: group.total
-  }));
-});
 
-const totalsByGroup = computed(() => {
-  const groups = new Map<string, number>();
-  props.transactions.forEach(transaction => {
-    const group = transaction.group || 'Unassigned';
-    groups.set(group, (groups.get(group) || 0) + transaction.amount);
-  });
-  return Array.from(groups.entries()).map(([group, total]) => ({ group, total }));
-});
-
-const totalsByCategory = computed(() => {
-  const categories = new Map<string, number>();
-  props.transactions.forEach(transaction => {
-    const category = transaction.category || 'Unassigned';
-    categories.set(category, (categories.get(category) || 0) + transaction.amount);
-  });
-  return Array.from(categories.entries()).map(([category, total]) => ({ category, total }));
-});
-
-const grandTotal = computed(() => {
-  return props.transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-});
 
 const buildDraggableIcon = (store: DraggableStore): Component | undefined =>
   store.group === 'transaction-group' ? RiSkipDownLine : undefined;
