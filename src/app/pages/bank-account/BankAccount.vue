@@ -60,8 +60,8 @@
         <div :class="$style.tableHeader">
           <span :class="$style.colDate">{{ t('bankAccount.date') }}</span>
           <span :class="$style.colPayee">{{ t('bankAccount.payee') }}</span>
+          <span :class="$style.colGroup">{{ t('bankAccount.group') }}</span>
           <span :class="$style.colCategory">{{ t('bankAccount.category') }}</span>
-          <span :class="$style.colNotes">{{ t('bankAccount.notes') }}</span>
           <span :class="$style.colAmount">{{ t('bankAccount.amount') }}</span>
           <span :class="$style.colActions"></span>
         </div>
