@@ -19,7 +19,7 @@
     >
       {{ t('bankAccount.payee') }}
       <span v-if="sortField === 'payee'" :class="$style.sortIcon">
-        {{ sortDirection === 'asc' ? '↑' : '↓' }}
+        {{ sortDirection === 'asc' ? '���' : '↓' }}
       </span>
     </span>
     <span
@@ -235,21 +235,9 @@ const sortBy = (field: 'date' | 'payee' | 'group' | 'category' | 'amount') => {
 };
 
 const addNewTransaction = () => {
-  // Get the latest date from existing transactions or use today
-  let newDate = new Date();
-
-  if (props.transactions.length > 0) {
-    // Find the most recent transaction date
-    const latestDate = new Date(Math.max(...props.transactions.map(t => new Date(t.date).getTime())));
-
-    // Add 1 day to ensure new transaction appears at the top when sorted by date desc
-    newDate = new Date(latestDate);
-    newDate.setDate(newDate.getDate() + 1);
-  }
-
   transactionStore.addTransaction({
     bankAccountId: props.accountId || '',
-    date: newDate.toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0],
     payee: '',
     group: '',
     category: '',
