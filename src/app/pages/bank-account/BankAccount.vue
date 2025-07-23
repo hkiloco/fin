@@ -19,9 +19,6 @@
         <h1 :class="$style.bankName">{{ selectedBankAccount?.bankName || t('bankAccount.bankAccount') }}</h1>
         <span :class="$style.accountType">{{ getAccountTypeLabel(selectedBankAccount?.accountType) }}</span>
       </div>
-      <div :class="$style.accountInfo">
-        <span :class="$style.accountName">{{ selectedBankAccount?.name }}</span>
-      </div>
 
       <!-- Transaction Summary -->
       <div v-if="accountSummary" :class="$style.summaryCards">
