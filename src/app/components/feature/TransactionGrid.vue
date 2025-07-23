@@ -180,6 +180,31 @@ const deleteTransaction = (id: string) => {
   }
 };
 
+const handleReorderTransaction = (data: { sourceId: string; targetId: string; type: string }) => {
+  // Find source and target transactions
+  const sourceTransaction = props.transactions.find(t => t.id === data.sourceId);
+  const targetTransaction = props.transactions.find(t => t.id === data.targetId);
+
+  if (sourceTransaction && targetTransaction) {
+    // For now, we'll swap the dates to change order
+    const sourceDate = sourceTransaction.date;
+    const targetDate = targetTransaction.date;
+
+    // Update dates to reorder
+    if (data.type === 'before') {
+      // Make source transaction one day before target
+      const newDate = new Date(targetDate);
+      newDate.setDate(newDate.getDate() - 1);
+      transactionStore.updateTransaction(data.sourceId, { date: newDate.toISOString().split('T')[0] });
+    } else {
+      // Make source transaction one day after target
+      const newDate = new Date(targetDate);
+      newDate.setDate(newDate.getDate() + 1);
+      transactionStore.updateTransaction(data.sourceId, { date: newDate.toISOString().split('T')[0] });
+    }
+  }
+};
+
 
 
 const sortBy = (field: 'date' | 'payee' | 'group' | 'category' | 'amount') => {
