@@ -129,6 +129,54 @@ export const useTransactionStore = () => {
     });
   };
 
+  // Get transactions by group and category for budget integration
+  const getTransactionsByBudgetCategory = (group: string, category: string, year?: number) => {
+    return computed(() => {
+      let filtered = transactions.value.filter(t => t.group === group && t.category === category);
+
+      if (year) {
+        filtered = filtered.filter(t => new Date(t.date).getFullYear() === year);
+      }
+
+      return filtered;
+    });
+  };
+
+  // Calculate actual spending for a budget category
+  const getActualSpendingForBudget = (group: string, category: string, year: number, month?: number) => {
+    return computed(() => {
+      let filtered = transactions.value.filter(t =>
+        t.group === group &&
+        t.category === category &&
+        new Date(t.date).getFullYear() === year
+      );
+
+      if (month !== undefined) {
+        filtered = filtered.filter(t => new Date(t.date).getMonth() === month);
+      }
+
+      return Math.abs(filtered.reduce((sum, t) => sum + (t.amount < 0 ? t.amount : 0), 0));
+    });
+  };
+
+  // Get available groups from existing transactions
+  const getAvailableGroups = computed(() => {
+    const groups = [...new Set(transactions.value.map(t => t.group))].filter(Boolean);
+    return groups.sort();
+  });
+
+  // Get available categories for a group
+  const getAvailableCategoriesForGroup = (group: string) => {
+    return computed(() => {
+      const categories = [...new Set(
+        transactions.value
+          .filter(t => t.group === group)
+          .map(t => t.category)
+      )].filter(Boolean);
+      return categories.sort();
+    });
+  };
+
   return {
     allTransactions,
     getTransactionsByAccountId,
@@ -138,6 +186,10 @@ export const useTransactionStore = () => {
     getTotalBalance,
     getTransactionsByDateRange,
     getAccountSummary,
+    getTransactionsByBudgetCategory,
+    getActualSpendingForBudget,
+    getAvailableGroups,
+    getAvailableCategoriesForGroup,
     addTransaction,
     updateTransaction,
     deleteTransaction
