@@ -185,16 +185,35 @@ const groupedTransactions = computed(() => {
 
 
 
-const updateTransaction = (id: string, field: string, value: string | number) => {
+// Debounced update function for text fields to prevent focus loss
+const debouncedUpdate = debounce((id: string, field: string, value: string | number) => {
   const updates: any = {};
-  
+
   if (field === 'amount') {
     updates[field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
   } else {
     updates[field] = value;
   }
-  
+
   transactionStore.updateTransaction(id, updates);
+}, 300); // Wait 300ms after user stops typing
+
+const updateTransaction = (id: string, field: string, value: string | number) => {
+  // For text fields (payee, group, category), use debounced updates
+  // For other fields (amount, date), update immediately
+  if (field === 'payee' || field === 'group' || field === 'category') {
+    debouncedUpdate(id, field, value);
+  } else {
+    const updates: any = {};
+
+    if (field === 'amount') {
+      updates[field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+    } else {
+      updates[field] = value;
+    }
+
+    transactionStore.updateTransaction(id, updates);
+  }
 };
 
 const deleteTransaction = (id: string) => {
