@@ -6,6 +6,7 @@
     <span />
 
     <!-- Column Headers -->
+    <span :class="[$style.columnHeader, $style.start]">{{ t('bankAccount.date') }}</span>
     <span :class="[$style.columnHeader, $style.start]">{{ t('bankAccount.payee') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
@@ -13,15 +14,21 @@
     <span />
     <span />
 
-    <!-- Totals Row -->
+    <!-- Date Filter Row -->
     <span />
     <Button
-      :color="allowDelete ? 'danger' : 'success'"
-      :icon="allowDelete ? RiLockUnlockLine : RiLockLine"
+      color="danger"
+      :icon="RiDeleteBinLine"
       textual
-      @click="allowDelete = !allowDelete"
+      @click="deleteAllTransactions"
     />
-    <span :class="[$style.sum, $style.totals]">{{ t('shared.totals') }}</span>
+    <span :class="[$style.dateFilter]">
+      <DatePicker
+        :modelValue="filterDate"
+        placeholder="Filter by date..."
+        @update:model-value="setFilterDate"
+      />
+    </span>
     <Currency :value="totalsByPayee.length > 0 ? totalsByPayee.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
     <Currency :value="totalsByGroup.length > 0 ? totalsByGroup.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
     <Currency :value="totalsByCategory.length > 0 ? totalsByCategory.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
@@ -66,7 +73,8 @@ import Currency from '@components/base/currency/Currency.vue';
 import { ReorderEvent } from '@components/base/draggable/Draggable.types';
 import Draggable from '@components/base/draggable/Draggable.vue';
 import { DraggableStore } from '@components/base/draggable/store';
-import { RiAddCircleLine, RiLockLine, RiLockUnlockLine, RiSkipDownLine } from '@remixicon/vue';
+import { RiAddCircleLine, RiDeleteBinLine, RiSkipDownLine } from '@remixicon/vue';
+import DatePicker from '@components/base/date-picker/DatePicker.vue';
 import { useTransactionStore, type Transaction } from '@store/transactions';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -78,7 +86,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const transactionStore = useTransactionStore();
-const allowDelete = ref(false);
+const filterDate = ref<string>('');
 
 // Group transactions by payee
 const groupedTransactions = computed(() => {
@@ -176,7 +184,7 @@ const addNewTransaction = () => {
 
 .transactionGrid {
   display: grid;
-  grid-template: auto / max-content max-content max-content 1fr 1fr 1fr 1fr max-content max-content;
+  grid-template: auto / max-content max-content max-content max-content 1fr 1fr 1fr 1fr max-content;
   align-items: center;
   padding-bottom: 20px;
 }
@@ -186,9 +194,7 @@ const addNewTransaction = () => {
   font-weight: var(--font-weight-l);
   padding-right: 10px;
 
-  &.totals {
-    margin-left: 5px;
-  }
+
 }
 
 .columnHeader {
@@ -214,6 +220,10 @@ const addNewTransaction = () => {
     border-bottom-right-radius: var(--border-radius-l);
     padding-right: 8px;
   }
+}
+
+.dateFilter {
+  margin-left: 5px;
 }
 
 .addTransactionBtn {
