@@ -86,10 +86,10 @@
         :modelValue="transaction.amount"
         @update:model-value="$emit('updateTransaction', transaction.id, 'amount', $event)"
       />
+      <Currency :testId="`${testId}-transaction-${index}-total`" :class="$style.meta" :value="transaction.amount" />
     </span>
 
-    <Currency :testId="`${testId}-transaction-${index}-total`" :class="$style.meta" :value="transaction.amount" />
-    <span :class="$style.meta">{{ formatDate(transaction.date) }}</span>
+    <span />
   </template>
 
 
