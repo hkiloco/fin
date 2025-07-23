@@ -178,8 +178,14 @@ export const useTransactionStore = () => {
     });
   };
 
+  // Get all transactions across all accounts
+  const getAllTransactions = () => {
+    return computed(() => transactions.value);
+  };
+
   return {
     allTransactions,
+    getAllTransactions,
     getTransactionsByAccountId,
     getAccountBalance,
     getAccountIncome,
