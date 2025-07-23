@@ -140,7 +140,7 @@ import TextField from '@components/base/text-field/TextField.vue';
 import Select from '@components/base/select/Select.vue';
 import ComponentTransition from '@components/misc/component-transition/ComponentTransition.vue';
 import { useMediaQuery } from '@composables/useMediaQuery.ts';
-import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine, RiAddLine, RiBankLine } from '@remixicon/vue';
+import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine, RiAddLine, RiBankLine, RiMoneyDollarCircleLine } from '@remixicon/vue';
 import { useStorage } from '@storage/index';
 import { useBankAccountStore } from '@store/bank-accounts';
 import { computed, ref, reactive } from 'vue';
