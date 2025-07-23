@@ -6,33 +6,24 @@
     <span />
 
     <!-- Column Headers -->
+    <span />
     <span :class="[$style.columnHeader, $style.dateColumn]">{{ t('bankAccount.date') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.payee') }}</span>
+    <span />
     <span :class="$style.columnHeader">{{ t('bankAccount.group') }}</span>
     <span :class="$style.columnHeader">{{ t('bankAccount.category') }}</span>
     <span :class="[$style.columnHeader, $style.lastColumn]">{{ t('bankAccount.amount') }}</span>
     <span />
     <span />
 
-    <!-- Date Filter Row -->
+    <!-- Empty Filter Row -->
     <span />
-    <Button
-      color="danger"
-      :icon="RiDeleteBinLine"
-      textual
-      @click="deleteAllTransactions"
-    />
-    <span :class="[$style.dateFilter]">
-      <DatePicker
-        :modelValue="filterDate"
-        placeholder="Filter by date..."
-        @update:model-value="setFilterDate"
-      />
-    </span>
-    <Currency :value="totalsByPayee.length > 0 ? totalsByPayee.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
-    <Currency :value="totalsByGroup.length > 0 ? totalsByGroup.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
-    <Currency :value="totalsByCategory.length > 0 ? totalsByCategory.reduce((a, b) => a + b.total, 0) : 0" :class="$style.sum" />
-    <Currency :value="grandTotal" :class="$style.sum" />
+    <span />
+    <span />
+    <span :class="[$style.dateFilter]" />
+    <span />
+    <span />
+    <span />
     <span />
     <span />
 
@@ -58,6 +49,7 @@
     <span />
     <Button
       :class="$style.addTransactionBtn"
+      color="primary"
       size="s"
       :icon="RiAddCircleLine"
       :text="t('bankAccount.addTransaction')"
