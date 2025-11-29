@@ -18,6 +18,39 @@
         :name="button.name"
       />
 
+      <!-- Bank Accounts Section -->
+      <div v-if="media !== 'mobile'" :class="$style.divider" />
+
+      <!-- Bank Account List (Above Add Button) -->
+      <RouterLink
+        v-for="account in bankAccountStore.accounts.value"
+        :key="account.id"
+        :to="`/bank-${createAccountSlug(account.name)}`"
+        :class="[
+          $style.btn,
+          $style.bankAccountBtn,
+          { [$style.active]: isCurrentBankAccount(account.name) },
+          { [$style.cashAccount]: account.name.toLowerCase() === 'cash' }
+        ]"
+        v-tooltip="{ text: account.name, position: 'right' }"
+      >
+        <RiMoneyDollarCircleLine v-if="account.name.toLowerCase() === 'cash'" />
+        <RiBankLine v-else />
+      </RouterLink>
+
+      <!-- Add Bank Account Button (Below Bank Accounts) -->
+      <Button
+        :icon="RiAddLine"
+        :tooltip="t('bankAccounts.addBankAccount')"
+        tooltipPosition="right"
+        :class="$style.btn"
+        color="success"
+        textual
+        @click="openAddBankAccountDialog"
+      />
+
+
+
       <div v-if="media !== 'mobile'" style="flex-grow: 1" />
 
       <ToolsButton :class="$style.btn" />
@@ -42,6 +75,53 @@
         <ComponentTransition :is="Component" v-if="Component" />
       </RouterView>
     </div>
+
+    <!-- Add Bank Account Dialog -->
+    <Dialog :open="showAddBankAccount" :title="t('bankAccounts.addBankAccount')" @close="closeAddBankAccountDialog">
+      <div :class="$style.bankAccountDialog">
+        <TextField
+          v-model="bankAccountForm.name"
+          :label="t('bankAccounts.accountName')"
+          :placeholder="t('bankAccounts.accountNamePlaceholder')"
+          required
+        />
+
+        <TextField
+          v-model="bankAccountForm.bankName"
+          :label="t('bankAccounts.bankName')"
+          :placeholder="t('bankAccounts.bankNamePlaceholder')"
+          required
+        />
+
+        <Select
+          v-model="bankAccountForm.accountType"
+          :label="t('bankAccounts.accountType')"
+          :options="accountTypeOptions"
+        />
+
+        <TextField
+          v-model="bankAccountForm.balance"
+          type="number"
+          :label="t('bankAccounts.initialBalance')"
+          :placeholder="t('bankAccounts.initialBalancePlaceholder')"
+        />
+
+        <div :class="$style.dialogActions">
+          <Button
+            color="dimmed"
+            @click="closeAddBankAccountDialog"
+          >
+            {{ t('common.cancel') }}
+          </Button>
+          <Button
+            color="primary"
+            @click="addBankAccount"
+          >
+            {{ t('bankAccounts.addAccount') }}
+          </Button>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -56,18 +136,47 @@ import ChangeYearButton from './navigation/year/ChangeYearButton.vue';
 import StatusBar from './status-bar/StatusBar.vue';
 import UpdateAppButton from '@app/pages/navigation/update/UpdateAppButton.vue';
 import Link from '@components/base/link/Link.vue';
+import Button from '@components/base/button/Button.vue';
+import Dialog from '@components/base/dialog/Dialog.vue';
+import TextField from '@components/base/text-field/TextField.vue';
+import Select from '@components/base/select/Select.vue';
 import ComponentTransition from '@components/misc/component-transition/ComponentTransition.vue';
 import { useMediaQuery } from '@composables/useMediaQuery.ts';
-import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine } from '@remixicon/vue';
+import { RiDonutChartLine, RiHandCoinLine, RiShoppingBagLine, RiBarChartBoxLine, RiAddLine, RiBankLine, RiMoneyDollarCircleLine } from '@remixicon/vue';
 import { useStorage } from '@storage/index';
-import { computed, ref } from 'vue';
+import { useBankAccountStore } from '@store/bank-accounts';
+import { computed, ref, reactive } from 'vue';
+import { RouterLink } from 'vue-router';
+import { createAccountSlug } from '@utils/bankAccountRoutes.ts';
+
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import type { Component } from 'vue';
 
 const menu = ref<HTMLDivElement>();
 const media = useMediaQuery();
 const { user } = useStorage();
 const { t } = useI18n();
+const $route = useRoute();
+const $router = useRouter();
+const bankAccountStore = useBankAccountStore();
+
+// Function to check if current route matches bank account
+const isCurrentBankAccount = (accountName: string): boolean => {
+  const expectedPath = `/bank-${createAccountSlug(accountName)}`;
+  return $route.path === expectedPath;
+};
+
+
+
+// Bank account management state
+const showAddBankAccount = ref(false);
+const bankAccountForm = reactive({
+  name: '',
+  bankName: '',
+  accountType: 'checking' as 'checking' | 'savings' | 'credit' | 'investment',
+  balance: 0
+});
 
 interface FrameButton {
   icon: Component;
@@ -78,8 +187,48 @@ interface FrameButton {
 const buttons = computed((): FrameButton[] => [
   { icon: RiDonutChartLine, name: 'dashboard', tooltip: t('page.dashboard.title') },
   { icon: RiHandCoinLine, name: 'income', tooltip: t('page.income.title') },
-  { icon: RiShoppingBagLine, name: 'expenses', tooltip: t('page.expenses.title') }
+  { icon: RiShoppingBagLine, name: 'expenses', tooltip: t('page.expenses.title') },
+  { icon: RiBarChartBoxLine, name: 'expense-details', tooltip: t('expenses.expenseTrackingDetails') }
 ]);
+
+const accountTypeOptions = computed(() => [
+  { id: 'checking', label: t('bankAccounts.checking') },
+  { id: 'savings', label: t('bankAccounts.savings') },
+  { id: 'credit', label: t('bankAccounts.credit') },
+  { id: 'investment', label: t('bankAccounts.investment') }
+]);
+
+const resetBankAccountForm = () => {
+  bankAccountForm.name = '';
+  bankAccountForm.bankName = '';
+  bankAccountForm.accountType = 'checking';
+  bankAccountForm.balance = 0;
+};
+
+const openAddBankAccountDialog = () => {
+  showAddBankAccount.value = true;
+};
+
+const closeAddBankAccountDialog = () => {
+  showAddBankAccount.value = false;
+  resetBankAccountForm();
+};
+
+const addBankAccount = () => {
+  if (bankAccountForm.name.trim() && bankAccountForm.bankName.trim()) {
+    const newAccount = bankAccountStore.addBankAccount({
+      name: bankAccountForm.name.trim(),
+      bankName: bankAccountForm.bankName.trim(),
+      accountType: bankAccountForm.accountType,
+      balance: bankAccountForm.balance
+    });
+    closeAddBankAccountDialog();
+
+    // Navigate to the new bank account page
+    const accountSlug = createAccountSlug(newAccount.name);
+    $router.push(`/bank-${accountSlug}`);
+  }
+};
 </script>
 
 <style lang="scss" module>
@@ -131,6 +280,22 @@ const buttons = computed((): FrameButton[] => [
     align-items: center;
     justify-content: center;
   }
+
+  .bankAccountBtn {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      width: 8px;
+      height: 8px;
+      background: var(--c-success);
+      border-radius: 50%;
+      border: 2px solid var(--app-background);
+    }
+  }
 }
 
 @include globals.onMobileDevices {
@@ -155,6 +320,63 @@ const buttons = computed((): FrameButton[] => [
 
     .divider {
       display: none;
+    }
+  }
+}
+
+.bankAccountForm {
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.bankAccountDialog {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.bankAccountBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--c-dimmed);
+  transition: color var(--transition-m);
+
+  &:hover {
+    color: var(--c-text);
+  }
+
+  &.active {
+    color: var(--c-primary);
+  }
+
+  &.cashAccount {
+    color: var(--c-success);
+
+    &:hover {
+      color: var(--c-success-hover);
+    }
+
+    &.active {
+      color: var(--c-success);
     }
   }
 }

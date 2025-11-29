@@ -38,17 +38,37 @@ const invalid = ref(false);
 const { state } = useDataStore();
 const { locale, n } = useI18n();
 
-const value = computed(() =>
-  invalid.value
-    ? innerValue.value
-    : focused.value || !modelValue.value
-      ? modelValue.value || ''
-      : n(modelValue.value, { key: 'currency', currency: state.currency })
-);
+const value = computed(() => {
+  if (invalid.value) {
+    return innerValue.value;
+  }
+
+  if (focused.value) {
+    return modelValue.value || '';
+  }
+
+  // Always format as currency when not focused, including negative values
+  if (modelValue.value !== undefined && modelValue.value !== null) {
+    return n(modelValue.value, { key: 'currency', currency: state.currency });
+  }
+
+  return '';
+});
 
 const keydown = (e: KeyboardEvent) => {
+  // Allow negative numbers by not preventing minus key
+  // Only prevent minus if it's not at the beginning
   if (e.key === '-') {
-    e.preventDefault();
+    const input = e.target as HTMLInputElement;
+    const cursorPosition = input.selectionStart || 0;
+    const currentValue = input.value;
+
+    // Prevent minus if:
+    // 1. It's not at the beginning of the input
+    // 2. There's already a minus sign in the value
+    if (cursorPosition > 0 || currentValue.includes('-')) {
+      e.preventDefault();
+    }
   }
 };
 
@@ -86,8 +106,21 @@ watch(focused, (value) => {
   }
 
   try {
-    modelValue.value = innerValue.value ? evalMathExpression(innerValue.value, locale.value) : 0;
-    invalid.value = false;
+    if (innerValue.value) {
+      // Handle simple negative numbers first
+      const numericValue = parseFloat(innerValue.value);
+      if (!isNaN(numericValue)) {
+        modelValue.value = numericValue;
+        invalid.value = false;
+      } else {
+        // Fall back to math expression evaluation for complex expressions
+        modelValue.value = evalMathExpression(innerValue.value, locale.value);
+        invalid.value = false;
+      }
+    } else {
+      modelValue.value = 0;
+      invalid.value = false;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {

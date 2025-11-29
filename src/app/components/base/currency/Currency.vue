@@ -30,7 +30,16 @@ const { n } = useI18n();
 const { state: dataState } = useDataStore();
 const { state: settingsState } = useSettingsStore();
 
-const formatted = computed(() => n(props.value ?? 0, { key: 'currency', currency: dataState.currency }));
+const formatted = computed(() => {
+  try {
+    const value = typeof props.value === 'number' ? props.value : 0;
+    const currency = dataState.currency || 'USD';
+    return n(value, { key: 'currency', currency });
+  } catch (error) {
+    console.warn('Currency formatting error:', error);
+    return props.value?.toString() || '0';
+  }
+});
 </script>
 
 <style lang="scss" module>
